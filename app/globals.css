@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg-color: #050505;
+  --panel-bg: #111111;
+  --border-color: #222222;
+  --text-main: #f3f4f6;
+  --text-muted: #8b8b8b;
+  --accent-purple: #c084fc;
+  --accent-green: #4ade80;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jetbrains-mono), monospace;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-color); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.snippet-card {
+  background-color: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.snippet-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.snippet-table th {
+  padding: 16px 24px;
+  background-color: #181818;
+  color: var(--accent-purple);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.snippet-table td {
+  padding: 16px 24px;
+  color: #d4d4d8;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.snippet-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.snippet-table tr:last-child td {
+  border-bottom: none;
+}
+
+.shiki-container pre {
+  padding: 24px !important;
+  background-color: transparent !important;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.shiki-container code {
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
