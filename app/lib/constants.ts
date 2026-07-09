@@ -3,10 +3,15 @@ import { BackgroundPreset, LanguageOption, ThemeOption } from "./types";
 export const BACKGROUND_PRESETS: BackgroundPreset[] = [
   { name: "Transparente", value: "transparent" },
   { name: "Índigo", value: "linear-gradient(140deg, #1e1b4b 0%, #0f172a 100%)" },
+  { name: "Azul", value: "linear-gradient(140deg, #0f172a 0%, #1e3a8a 100%)" },
   { name: "Esmeralda", value: "linear-gradient(140deg, #111827 0%, #064e3b 100%)" },
+  { name: "Verde", value: "linear-gradient(140deg, #064e3b 0%, #10b981 100%)" },
   { name: "Rosa", value: "linear-gradient(140deg, #4c0519 0%, #1e1b4b 100%)" },
-  { name: "Carvão", value: "#1a1a1a" },
+  { name: "Vermelho", value: "linear-gradient(140deg, #7f1d1d 0%, #991b1b 100%)" },
+  { name: "Amarelo", value: "linear-gradient(140deg, #78350f 0%, #ca8a04 100%)" },
   { name: "Preto", value: "#050505" },
+  { name: "Cinza", value: "#0a0a0a" },
+  { name: "Branco", value: "#fff" },
 ];
 
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
@@ -32,21 +37,25 @@ export const THEME_OPTIONS: ThemeOption[] = [
   { label: "Nord", value: "nord" },
   { label: "Vitesse Dark", value: "vitesse-dark" },
   { label: "Min Dark", value: "min-dark" },
+  { label: "Ayu Dark", value: "ayu-dark" },
+  
 ];
 
-export const DEFAULT_CODE = `export function isIdempotent(fn) {
-  const seen = new Set();
-  return (input) => {
-    const key = JSON.stringify(input);
-    if (seen.has(key)) return null;
-    seen.add(key);
-    return fn(input);
-  };
-}`;
+export const DEFAULT_CODE = `function pullMasterSword(hearts: number) {
+  if (hearts < 13) {
+    throw new Error("Not enough life force. You died! 💀");
+  }
+  return "Master Sword obtained! 🗡️✨";
+}
 
-export const DEFAULT_MARKDOWN_TABLE = `| user_id | user_name | user_email | created_at |
-| ------- | --------- | ---------- | ---------- |
-| 1 | Ana Silva | ana.silva@email.com | 2026-01-15 |
-| 2 | Bruno Souza | bruno.s@email.com | 2026-02-20 |
-| 3 | Carlos Edu | cadu@email.com | 2026-03-05 |
+const linkHearts = 3;
+pullMasterSword(linkHearts);
+`;
+
+export const DEFAULT_MARKDOWN_TABLE = `| Codename | Identity | Equipment | Financial Status |
+| :--- | :--- | :--- | :--- |
+| Captain America | Steve Rogers | Vibranium Shield | 🧊 Frozen (since 1945) |
+| Spider-Man | Peter Parker | Web Shooters | 🪙 Broke (Again) |
+| Iron Man | Tony Stark | Mark LXXXV Armor | 💳 Unlimited (Black Card) |
+| Thor | Thor Odinson | Mjolnir | 🍺 Tab open at the tavern |
 `;

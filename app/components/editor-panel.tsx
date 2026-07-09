@@ -1,6 +1,6 @@
 "use client";
 
-import type { RefObject } from "react";
+import { useState, type RefObject } from "react";
 import { ExportControls } from "./export-controls";
 import { Mode } from "../lib/types";
 import { BACKGROUND_PRESETS, LANGUAGE_OPTIONS, THEME_OPTIONS } from "../lib/constants";
@@ -41,6 +41,8 @@ export function EditorPanel(props: EditorPanelProps) {
     targetRef,
   } = props;
 
+  const [isThemeOpen, setIsThemeOpen] = useState(false);
+
   return (
     <aside className="w-96 flex-shrink-0 border-r border-[#222] bg-[#111] flex flex-col h-full z-10">
       <div className="p-6 border-b border-[#222]">
@@ -50,7 +52,7 @@ export function EditorPanel(props: EditorPanelProps) {
             <line x1="3" y1="9" x2="21" y2="9"></line>
             <line x1="9" y1="21" x2="9" y2="9"></line>
           </svg>
-          TableRay
+          tabli
         </h1>
         <p className="text-[#8b8b8b] text-xs mt-2">Prints premium de código e tabelas.</p>
 
@@ -104,19 +106,48 @@ export function EditorPanel(props: EditorPanelProps) {
                   ))}
                 </select>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 relative">
                 <label className="text-xs uppercase tracking-widest text-[#8b8b8b] font-bold">
                   Tema
                 </label>
-                <select
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
-                  className="bg-[#0a0a0a] border border-[#222] rounded-lg px-3 py-2 text-sm"
+                
+                <button
+                  type="button"
+                  onClick={() => setIsThemeOpen(!isThemeOpen)}
+                  className="flex items-center justify-between bg-[#0a0a0a] border border-[#222] rounded-lg px-3 py-2 text-sm text-white hover:border-[#333] transition-colors w-full focus:outline-none"
                 >
-                  {THEME_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
+                  <span>
+                    {THEME_OPTIONS.find((opt) => opt.value === theme)?.label || "Selecione..."}
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 text-[#8b8b8b] transition-transform duration-200 ${isThemeOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isThemeOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-full bg-[#0a0a0a] border border-[#222] rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto flex flex-col py-1">
+                    {THEME_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setTheme(opt.value);
+                          setIsThemeOpen(false); // Fecha após selecionar
+                        }}
+                        className={`px-3 py-2 text-sm text-left transition-colors hover:bg-[#1a1a1a] ${
+                          theme === opt.value ? "text-white bg-[#111]" : "text-[#8b8b8b]"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

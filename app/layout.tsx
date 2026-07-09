@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Header } from "./components/header";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -8,7 +9,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TableRay — prints de código e tabelas",
+  title: "Tabli - prints de código e tabelas",
   description: "Gere imagens premium de blocos de código e tabelas markdown.",
 };
 

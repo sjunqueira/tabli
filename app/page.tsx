@@ -6,21 +6,23 @@ import { CaptureFrame } from "./components/capture-frame";
 import { BACKGROUND_PRESETS, DEFAULT_CODE } from "./lib/constants";
 import type { Mode, TableData } from "./lib/types";
 import { BottomBar } from "./components/bottom-bar";
+import { Header } from "./components/header";
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>("code");
-
   const [code, setCode] = useState(DEFAULT_CODE);
   const [language, setLanguage] = useState("typescript");
   const [theme, setTheme] = useState("github-dark");
-  const [fileName, setFileName] = useState("idempotency.ts");
+  const [fileName, setFileName] = useState("heroes.ts");
   const [showWindowControls, setShowWindowControls] = useState(true);
 
   const [table, setTable] = useState<TableData>({
-    headers: ["user_id", "user_name", "user_email"],
+    headers: ["Codename", "Identity", "Equipment", "Financial Status"],
     rows: [
-      ["1", "Fulano", "fulano@email.com"],
-      ["2", "Beltrano", "beltrano@email.com"],
+      ["Captain America", "Steve Rogers", "Vibranium Shield", "🧊 Frozen (since 1945)"],
+      ["Spider-Man", "Peter Parker", "Web Shooters", "🪙 Broke (Again)"],
+      ["Iron Man", "Tony Stark", "Mark LXXXV Armor", "💳 Unlimited (Black Card)"],
+      ["Thor", "Thor Odinson", "Mjolnir", "🍺 Tab open at the tavern"],
     ],
   });
 
@@ -31,16 +33,25 @@ export default function Home() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-[#f3f4f6]">
-      {mode === "table" && <TableSidebar table={table} setTable={setTable} />}
+      {/* ⚠️ Mudança aqui: Passamos o isOpen em vez de renderizar condicionalmente */}
+      <TableSidebar 
+        table={table} 
+        setTable={setTable} 
+        isOpen={mode === "table"} 
+      />
 
       <main
-        className="flex-1 flex items-center justify-center overflow-auto relative"
+        className="flex-1 flex items-center justify-center relative"
         style={{
           backgroundColor: "#0a0a0a",
           backgroundImage: "radial-gradient(#222 1px, transparent 1px)",
           backgroundSize: "20px 20px",
         }}
       >
+        <div className="absolute top-0 left-0 w-full z-10">
+          <Header />
+        </div>
+
         <CaptureFrame
           ref={frameRef}
           mode={mode}

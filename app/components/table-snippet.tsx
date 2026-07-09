@@ -2,7 +2,7 @@ import { TableData } from "../lib/types";
 
 export function TableSnippet({ table }: { table: TableData }) {
   return (
-    <div className="snippet-card min-w-[420px] max-w-[900px]">
+    <div className="snippet-card min-w-[420px] w-fit">
       <table className="snippet-table">
         <thead>
           <tr>
