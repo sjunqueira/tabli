@@ -6,35 +6,36 @@ import { useImageExport } from "../hooks/use-image-export";
 interface ExportControlsProps {
   targetRef: RefObject<HTMLDivElement>;
   fileName?: string;
+  compact?: boolean;
 }
 
-const LABELS: Record<string, string> = {
-  idle: "Copiar imagem",
-  rendering: "Renderizando...",
-  success: "Copiado!",
-  error: "Erro, tente de novo",
-  fallback: "Veja abaixo",
-};
-
-export function ExportControls({ targetRef, fileName }: ExportControlsProps) {
+export function ExportControls({ targetRef, fileName, compact }: ExportControlsProps) {
   const { status, copyImage, downloadImage, fallbackUrl, setFallbackUrl } =
     useImageExport(targetRef);
 
   return (
-    <div className="p-6 border-t border-[#222] flex flex-col gap-2">
+    <div className={compact ? "flex items-center gap-2" : "p-6 border-t border-[#222] flex flex-col gap-2"}>
       <button
         onClick={copyImage}
         disabled={status === "rendering"}
-        className="bg-[#f3f4f6] text-[#050505] w-full py-3 rounded-lg font-bold hover:bg-white transition-colors disabled:opacity-60"
+        className={
+          compact
+            ? "bg-[#f3f4f6] text-[#050505] px-4 py-1.5 rounded-md text-xs font-bold hover:bg-white transition-colors disabled:opacity-60"
+            : "bg-[#f3f4f6] text-[#050505] w-full py-3 rounded-lg font-bold hover:bg-white transition-colors disabled:opacity-60"
+        }
       >
-        {LABELS[status]}
+        {status === "rendering" ? "Renderizando..." : status === "success" ? "Copiado!" : "Copiar"}
       </button>
       <button
         onClick={() => downloadImage(`${fileName || "snippet"}.png`)}
         disabled={status === "rendering"}
-        className="border border-[#333] text-[#d4d4d8] w-full py-2.5 rounded-lg text-sm hover:border-white hover:text-white transition-colors disabled:opacity-60"
+        className={
+          compact
+            ? "border border-[#333] text-[#d4d4d8] px-4 py-1.5 rounded-md text-xs hover:border-white hover:text-white transition-colors disabled:opacity-60"
+            : "border border-[#333] text-[#d4d4d8] w-full py-2.5 rounded-lg text-sm hover:border-white hover:text-white transition-colors disabled:opacity-60"
+        }
       >
-        Baixar PNG
+        Baixar
       </button>
 
       {status === "fallback" && fallbackUrl && (

@@ -3,23 +3,25 @@
 import { forwardRef } from "react";
 import { CodeSnippet } from "./code-snippet";
 import { TableSnippet } from "./table-snippet";
-import { Mode } from "../lib/types";
+import type { Mode, TableData } from "../lib/types";
 
 interface CaptureFrameProps {
   mode: Mode;
   background: string;
   padding: number;
   code: string;
+  onCodeChange: (v: string) => void;
   language: string;
   theme: string;
   fileName: string;
+  onFileNameChange: (v: string) => void;
   showWindowControls: boolean;
-  markdown: string;
+  table: TableData;
 }
 
 export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
   function CaptureFrame(
-    { mode, background, padding, code, language, theme, fileName, showWindowControls, markdown },
+    { mode, background, padding, code, onCodeChange, language, theme, fileName, onFileNameChange, showWindowControls, table },
     ref
   ) {
     return (
@@ -31,13 +33,15 @@ export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
         {mode === "code" ? (
           <CodeSnippet
             code={code}
+            onCodeChange={onCodeChange}
             language={language}
             theme={theme}
             fileName={fileName}
+            onFileNameChange={onFileNameChange}
             showWindowControls={showWindowControls}
           />
         ) : (
-          <TableSnippet markdown={markdown} />
+          <TableSnippet table={table} />
         )}
       </div>
     );

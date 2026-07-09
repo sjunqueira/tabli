@@ -9,16 +9,17 @@ export function useImageExport(targetRef: RefObject<HTMLDivElement>) {
   const [status, setStatus] = useState<ExportStatus>("idle");
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
 
-  const renderCanvas = useCallback(async () => {
-    if (!targetRef.current) throw new Error("Nada para capturar.");
-    await new Promise((r) => setTimeout(r, 50)); // dá tempo do highlight assentar
-    return html2canvas(targetRef.current, {
-      scale: 2,
-      backgroundColor: null,
-      logging: false,
-      useCORS: true,
-    });
-  }, [targetRef]);
+const renderCanvas = useCallback(async () => {
+  if (!targetRef.current) throw new Error("Nada para capturar.");
+  await new Promise((r) => setTimeout(r, 50));
+  return html2canvas(targetRef.current, {
+    scale: 2,
+    backgroundColor: null,
+    logging: false,
+    useCORS: true,
+    ignoreElements: (el) => el.hasAttribute("data-ignore-in-export"),
+  });
+}, [targetRef]);
 
   const copyImage = useCallback(async () => {
     setStatus("rendering");
