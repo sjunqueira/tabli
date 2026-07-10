@@ -1,17 +1,17 @@
 import { BackgroundPreset, LanguageOption, PaddingPreset, ThemeOption } from "./types";
 
 export const BACKGROUND_PRESETS: BackgroundPreset[] = [
-  { name: "Transparente", value: "transparent" },
-  { name: "Índigo", value: "linear-gradient(140deg, #1e1b4b 0%, #0f172a 100%)" },
-  { name: "Azul", value: "linear-gradient(140deg, #0f172a 0%, #1e3a8a 100%)" },
-  { name: "Esmeralda", value: "linear-gradient(140deg, #111827 0%, #064e3b 100%)" },
-  { name: "Verde", value: "linear-gradient(140deg, #064e3b 0%, #10b981 100%)" },
-  { name: "Rosa", value: "linear-gradient(140deg, #4c0519 0%, #1e1b4b 100%)" },
-  { name: "Vermelho", value: "linear-gradient(140deg, #7f1d1d 0%, #991b1b 100%)" },
-  { name: "Amarelo", value: "linear-gradient(140deg, #78350f 0%, #ca8a04 100%)" },
-  { name: "Preto", value: "#050505" },
-  { name: "Cinza", value: "#0a0a0a" },
-  { name: "Branco", value: "#fff" },
+  { id: "transparent", value: "transparent" },
+  { id: "indigo", value: "linear-gradient(140deg, #1e1b4b 0%, #0f172a 100%)" },
+  { id: "blue", value: "linear-gradient(140deg, #0f172a 0%, #1e3a8a 100%)" },
+  { id: "emerald", value: "linear-gradient(140deg, #111827 0%, #064e3b 100%)" },
+  { id: "green", value: "linear-gradient(140deg, #064e3b 0%, #10b981 100%)" },
+  { id: "pink", value: "linear-gradient(140deg, #4c0519 0%, #1e1b4b 100%)" },
+  { id: "red", value: "linear-gradient(140deg, #7f1d1d 0%, #991b1b 100%)" },
+  { id: "yellow", value: "linear-gradient(140deg, #78350f 0%, #ca8a04 100%)" },
+  { id: "black", value: "#050505" },
+  { id: "gray", value: "#0a0a0a" },
+  { id: "white", value: "#fff" },
 ];
 
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
@@ -31,11 +31,11 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
 ];
 
 
-export const PADDING_PRESETS: { id: PaddingPreset; label: string; value: number }[] = [
-  { id: "tight", label: "Tight", value: 16 },
-  { id: "compact", label: "Compact", value: 32 },
-  { id: "default", label: "Default", value: 48 },
-  { id: "spacious", label: "Spacious", value: 64 },
+export const PADDING_PRESETS: { id: PaddingPreset; value: number }[] = [
+  { id: "tight", value: 16 },
+  { id: "compact", value: 32 },
+  { id: "default", value: 48 },
+  { id: "spacious", value: 64 },
 ];
 
 export const MAX_CODE_CARD_HEIGHT = 560;

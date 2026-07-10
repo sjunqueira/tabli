@@ -1,7 +1,20 @@
 export type Mode = "code" | "table";
 
+export type BackgroundId =
+  | "transparent"
+  | "indigo"
+  | "blue"
+  | "emerald"
+  | "green"
+  | "pink"
+  | "red"
+  | "yellow"
+  | "black"
+  | "gray"
+  | "white";
+
 export interface BackgroundPreset {
-  name: string;
+  id: BackgroundId;
   value: string;
 }
 
@@ -25,3 +38,6 @@ export interface TableData {
 export type ExportFormat = "png" | "jpeg";
 
 export type PaddingPreset = "tight" | "compact" | "default" | "spacious";
+
+export type Locale = "pt-BR" | "en-US";
+
