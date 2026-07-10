@@ -1,11 +1,11 @@
 # Tabli
 
 <p align="center">
-  <img src=".github/assets/hero.png" alt="Tabli preview">
+  <img src=".github/assets/hero.png" alt="Tabli hero">
 </p>
 
 <p align="center">
-  Create beautiful images from code snippets and tables — entirely in your browser.
+  <strong>Create beautiful images from code snippets and tables, entirely in your browser.</strong>
 </p>
 
 <p align="center">
@@ -13,6 +13,14 @@
 </p>
 
 ---
+
+## Preview
+
+<p align="center">
+  <img src=".github/assets/app.png" alt="Tabli application">
+</p>
+
+Tabli is a lightweight tool for creating polished images from code snippets and structured tables. Everything runs locally in your browser—no account required, no uploads, no distractions.
 
 ## Features
 
@@ -22,19 +30,19 @@
 - 📝 Inline editing with live preview
 - 📄 Editable filename
 - 🌐 Multiple languages and themes
-- 🖼️ Adjustable backgrounds and padding
+- 🎨 Custom backgrounds and adjustable padding
 
 ### Tables
 
-- 📊 Visual table editor
-- ➕ Add, edit and remove rows and columns
-- 📸 Export clean, presentation-ready tables
+- 📊 Dedicated table editor
+- ➕ Add, edit and remove rows or columns
+- 📷 Export presentation-ready tables
 
 ### Export
 
-- 📋 Copy directly to the clipboard
+- 📋 Copy directly to your clipboard
 - 💾 Download as PNG
-- ⚡ High-quality rendering with `html2canvas-pro`
+- ⚡ High-quality rendering powered by `html2canvas-pro`
 
 ---
 
@@ -62,29 +70,29 @@ npm install
 npm run dev
 ```
 
-Then open:
-
-```
-http://localhost:3000
-```
+Open `http://localhost:3000`.
 
 ---
 
 ## Roadmap
 
-- [ ] Persist editor state in Local Storage
-- [ ] Import tables from CSV
-- [ ] More export formats (SVG)
+- [ ] Persist workspace using Local Storage
+- [ ] CSV import for tables
+- [ ] SVG export
 - [ ] Keyboard shortcuts
-- [ ] More background presets
+- [ ] Additional background presets
+
+---
+
+## Built with AI
+
+Tabli was developed with the assistance of AI tools throughout the development process—from brainstorming and UI iterations to implementation support and code review. Design decisions, architecture, and the final implementation were curated and validated by the author.
 
 ---
 
 ## Contributing
 
-Contributions, ideas and feedback are always welcome.
-
-If you'd like to improve Tabli, feel free to open an issue or submit a pull request.
+Contributions, ideas and feedback are welcome. Feel free to open an issue or submit a pull request.
 
 ---
 
