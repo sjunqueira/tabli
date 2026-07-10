@@ -3,7 +3,9 @@
 import { useState, type RefObject } from "react";
 import { BACKGROUND_PRESETS, LANGUAGE_OPTIONS, THEME_OPTIONS, PADDING_PRESETS } from "../lib/constants";
 import { ExportControls } from "./export-controls";
-import type { ExportFormat, Mode, PaddingPreset } from "../lib/types";
+import { LanguageIcon } from "../lib/language-icons";
+import { useTranslations } from "../lib/i18n";
+import type { ExportFormat, ExportScale, Mode, PaddingPreset } from "../lib/types";
 
 interface BottomBarProps {
   mode: Mode;
@@ -23,6 +25,8 @@ interface BottomBarProps {
   targetRef: RefObject<HTMLDivElement | null>;
   fileName: string;
   exportFormat: ExportFormat;
+  exportScale: ExportScale;
+  onExportSuccess?: () => void;
 }
 
 export function BottomBar(props: BottomBarProps) {
@@ -31,13 +35,16 @@ export function BottomBar(props: BottomBarProps) {
     showWindowControls, setShowWindowControls,
     showLineNumbers, setShowLineNumbers,
     background, setBackground, padding, setPadding,
-    targetRef, fileName, exportFormat,
+    targetRef, fileName, exportFormat, exportScale, onExportSuccess,
   } = props;
 
+  const { t } = useTranslations();
   const [isBgOpen, setIsBgOpen] = useState(false);
   const [isPaddingOpen, setIsPaddingOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
 
   const activePadding = PADDING_PRESETS.find((p) => p.id === padding) || PADDING_PRESETS[2];
+  const activeLanguage = LANGUAGE_OPTIONS.find((l) => l.value === language) || LANGUAGE_OPTIONS[0];
 
   return (
     <div className="bottom-bar flex items-center">
@@ -48,7 +55,7 @@ export function BottomBar(props: BottomBarProps) {
             mode === "code" ? "bg-white text-black" : "text-[#8b8b8b] hover:text-white"
           }`}
         >
-          Código
+          {t.common.code}
         </button>
         <button
           onClick={() => setMode("table")}
@@ -56,11 +63,55 @@ export function BottomBar(props: BottomBarProps) {
             mode === "table" ? "bg-white text-black" : "text-[#8b8b8b] hover:text-white"
           }`}
         >
-          Tabela
+          {t.common.table}
         </button>
       </div>
 
       <div className="bottom-bar-divider ml-2" />
+
+      {mode === "code" && (
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+            className="flex items-center gap-1.5 bg-transparent hover:bg-black/20 rounded-md px-2 py-1.5 transition-colors focus:outline-none"
+          >
+            <LanguageIcon language={activeLanguage.value} className="w-3.5 h-3.5 shrink-0" />
+            <span className="text-xs text-[#8b8b8b] hover:text-white transition-colors whitespace-nowrap">
+              {activeLanguage.label}
+            </span>
+            <svg
+              className={`w-3.5 h-3.5 shrink-0 text-[#8b8b8b] transition-transform duration-200 ${isLanguageOpen ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            </svg>
+          </button>
+
+          {isLanguageOpen && (
+            <div className="absolute bottom-full left-0 mb-1 w-44 max-h-72 overflow-y-auto bg-[#0a0a0a] border border-[#222] rounded-lg shadow-xl z-50 flex flex-col py-1">
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => {
+                    setLanguage(opt.value);
+                    setIsLanguageOpen(false);
+                  }}
+                  className={`flex items-center gap-2 px-3 py-2 text-xs text-left transition-colors hover:bg-[#1a1a1a] ${
+                    language === opt.value ? "text-white bg-[#111]" : "text-[#8b8b8b]"
+                  }`}
+                >
+                  <LanguageIcon language={opt.value} className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div
         className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${
@@ -68,13 +119,7 @@ export function BottomBar(props: BottomBarProps) {
         }`}
       >
         <div className="flex items-center whitespace-nowrap">
-          <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bottom-bar-select">
-            {LANGUAGE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-
-          <select value={theme} onChange={(e) => setTheme(e.target.value)} className="bottom-bar-select ml-2">
+          <select value={theme} onChange={(e) => setTheme(e.target.value)} className="bottom-bar-select">
             {THEME_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
@@ -86,7 +131,7 @@ export function BottomBar(props: BottomBarProps) {
               checked={showWindowControls}
               onChange={(e) => setShowWindowControls(e.target.checked)}
             />
-            Janela
+            {t.bottomBar.windowControls}
           </label>
 
           <label className="flex items-center gap-1.5 text-xs text-[#8b8b8b] cursor-pointer pr-3">
@@ -95,7 +140,7 @@ export function BottomBar(props: BottomBarProps) {
               checked={showLineNumbers}
               onChange={(e) => setShowLineNumbers(e.target.checked)}
             />
-            Linhas
+            {t.bottomBar.lineNumbers}
           </label>
 
           <div className="bottom-bar-divider mr-2" />
@@ -122,7 +167,7 @@ export function BottomBar(props: BottomBarProps) {
                   }}
                 />
                 <span className="text-xs text-[#8b8b8b] hover:text-white transition-colors truncate text-left w-full">
-                  {activeBg?.name}
+                  {t.backgrounds[activeBg.id]}
                 </span>
               </div>
 
@@ -142,7 +187,7 @@ export function BottomBar(props: BottomBarProps) {
           <div className="absolute bottom-full left-0 mb-1 w-40 bg-[#0a0a0a] border border-[#222] rounded-lg shadow-xl z-50 flex flex-col py-1 overflow-hidden">
             {BACKGROUND_PRESETS.map((preset) => (
               <button
-                key={preset.name}
+                key={preset.id}
                 type="button"
                 onClick={() => {
                   setBackground(preset.value);
@@ -160,7 +205,7 @@ export function BottomBar(props: BottomBarProps) {
                       : preset.value,
                   }}
                 />
-                <span className="truncate">{preset.name}</span>
+                <span className="truncate">{t.backgrounds[preset.id]}</span>
               </button>
             ))}
           </div>
@@ -176,7 +221,7 @@ export function BottomBar(props: BottomBarProps) {
           className="flex items-center gap-1.5 bg-transparent hover:bg-black/20 rounded-md px-2 py-1.5 transition-colors focus:outline-none"
         >
           <span className="text-xs text-[#8b8b8b] hover:text-white transition-colors">
-            {activePadding.label}
+            {t.paddings[activePadding.id]}
           </span>
           <svg
             className={`w-3.5 h-3.5 shrink-0 text-[#8b8b8b] transition-transform duration-200 ${isPaddingOpen ? "rotate-180" : ""}`}
@@ -202,7 +247,7 @@ export function BottomBar(props: BottomBarProps) {
                   padding === preset.id ? "text-white bg-[#111]" : "text-[#8b8b8b]"
                 }`}
               >
-                {preset.label}
+                {t.paddings[preset.id]}
               </button>
             ))}
           </div>
@@ -215,7 +260,9 @@ export function BottomBar(props: BottomBarProps) {
         targetRef={targetRef}
         fileName={fileName.split(".")[0] || "snippet"}
         format={exportFormat}
+        scale={exportScale}
         compact
+        onExportSuccess={onExportSuccess}
       />
     </div>
   );
