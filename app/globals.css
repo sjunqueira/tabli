@@ -39,9 +39,8 @@ body {
 }
 
 .snippet-table th {
-  padding: 16px 24px;
-  background-color: #181818;
-  color: var(--accent-purple);
+  /* background-color e color vêm inline no componente (acompanham o fundo escolhido) */
+  padding: 12px 16px;
   font-weight: 700;
   font-size: 0.85rem;
   letter-spacing: 0.05em;
@@ -49,7 +48,7 @@ body {
 }
 
 .snippet-table td {
-  padding: 16px 24px;
+  padding: 12px 16px;
   color: #d4d4d8;
   font-size: 0.9rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);

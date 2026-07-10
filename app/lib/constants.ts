@@ -1,4 +1,4 @@
-import { BackgroundPreset, LanguageOption, PaddingPreset, ThemeOption } from "./types";
+import { BackgroundId, BackgroundPreset, LanguageOption, PaddingPreset, ThemeOption } from "./types";
 
 export const BACKGROUND_PRESETS: BackgroundPreset[] = [
   { id: "transparent", value: "transparent" },
@@ -13,6 +13,23 @@ export const BACKGROUND_PRESETS: BackgroundPreset[] = [
   { id: "gray", value: "#0a0a0a" },
   { id: "white", value: "#fff" },
 ];
+
+// cor do cabeçalho da tabela (fundo + texto) por preset de fundo — presets
+// "neutros" (transparente/preto/cinza/branco) caem num cinza sutil ("ghost"),
+// os coloridos puxam um tom próximo ao do gradiente escolhido
+export const TABLE_HEADER_ACCENTS: Record<BackgroundId, { bg: string; text: string }> = {
+  transparent: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
+  black: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
+  gray: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
+  white: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
+  indigo: { bg: "rgba(99,102,241,0.14)", text: "#a5b4fc" },
+  blue: { bg: "rgba(59,130,246,0.14)", text: "#93c5fd" },
+  emerald: { bg: "rgba(16,185,129,0.14)", text: "#6ee7b7" },
+  green: { bg: "rgba(74,222,128,0.14)", text: "#86efac" },
+  pink: { bg: "rgba(236,72,153,0.14)", text: "#f9a8d4" },
+  red: { bg: "rgba(239,68,68,0.14)", text: "#fca5a5" },
+  yellow: { bg: "rgba(245,158,11,0.14)", text: "#fcd34d" },
+};
 
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { label: "TypeScript", value: "typescript" },
@@ -41,6 +58,21 @@ export const PADDING_PRESETS: { id: PaddingPreset; value: number }[] = [
 export const MAX_CODE_CARD_HEIGHT = 560;
 export const MAX_CARD_HEIGHT = 560;
 export const FONT_SIZES = [12, 13, 14, 15, 16, 18, 20];
+
+// a partir daqui a tabela já fica visualmente apertada mesmo que nenhum
+// dado esteja sendo cortado ainda — vale avisar antes de chegar no ponto
+// em que colunas ficam pequenas demais pra mostrar o conteúdo
+export const TABLE_SOFT_COLUMN_COUNT = 6;
+
+// truncar um pouco é aceitável (o usuário ainda reconhece o conteúdo); o
+// alerta severo só dispara quando sobra menos que essa fração do texto
+// visível dentro da célula
+export const TABLE_CLIP_VISIBLE_RATIO = 0.6;
+
+export const MIN_COLUMN_WIDTH = 72;
+// padding horizontal de cada célula (globals.css .snippet-table th/td) —
+// usado pra estimar a largura real de uma coluna a partir do texto dentro dela
+export const TABLE_CELL_PADDING_X = 32;
 
 export const CARD_MIN_WIDTH = 420;
 // a partir daqui o card ainda cabe (cresce até o limite real), mas já

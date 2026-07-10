@@ -33,6 +33,8 @@ export type TableFormat = "markdown" | "csv" | "cells";
 export interface TableData {
   headers: string[];
   rows: string[][];
+  // largura manual (px) por coluna — null/undefined = auto (tamanho por conteúdo)
+  columnWidths?: (number | null)[];
 }
 
 export type ExportFormat = "png" | "jpeg";
