@@ -1,43 +1,92 @@
 # Tabli
 
-Turn code snippets and Markdown tables into beautiful, shareable images — right in your browser.
+<p align="center">
+  <img src=".github/assets/hero.png" alt="Tabli preview">
+</p>
 
-Built as a Raycast [Code Images](https://ray.so) alternative with one addition it doesn't have: a dedicated Markdown table formatter, so you're not stuck screenshotting raw pipe-delimited text.
+<p align="center">
+  Create beautiful images from code snippets and tables — entirely in your browser.
+</p>
+
+<p align="center">
+  Inspired by <a href="https://ray.so">Ray.so</a>, with first-class support for tables.
+</p>
+
+---
 
 ## Features
 
-- **Code snippets** — syntax highlighting for multiple languages via [Shiki](https://shiki.style)
-- **Markdown tables** — paste GFM-style tables, get a clean rendered image via [react-markdown](https://github.com/remarkjs/react-markdown) + [remark-gfm](https://github.com/remarkjs/remark-gfm)
-- **Custom backgrounds** — solid colors, gradients, or transparent
-- **Adjustable padding** — control the frame around your snippet
-- **One-click export** — copy to clipboard or download as PNG, powered by [html2canvas-pro](https://github.com/niklasvh/html2canvas-pro)
+### Code snippets
 
-## Tech stack
+- ✨ Syntax highlighting powered by Shiki
+- 📝 Inline editing with live preview
+- 📄 Editable filename
+- 🌐 Multiple languages and themes
+- 🖼️ Adjustable backgrounds and padding
 
-- [Next.js](https://nextjs.org) (App Router)
+### Tables
+
+- 📊 Visual table editor
+- ➕ Add, edit and remove rows and columns
+- 📸 Export clean, presentation-ready tables
+
+### Export
+
+- 📋 Copy directly to the clipboard
+- 💾 Download as PNG
+- ⚡ High-quality rendering with `html2canvas-pro`
+
+---
+
+## Tech Stack
+
+- Next.js (App Router)
+- React
 - TypeScript
 - Tailwind CSS v4
-- Shiki (syntax highlighting)
-- react-markdown + remark-gfm (table rendering)
-- html2canvas-pro (image export — chosen over html2canvas for correct `oklch()` color support)
+- Shiki
+- Papa Parse
+- html2canvas-pro
 
-## Getting started
+---
+
+## Getting Started
 
 ```bash
 git clone https://github.com/sjunqueira/tabli.git
+
 cd tabli
+
 npm install
+
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Then open:
+
+```
+http://localhost:3000
+```
+
+---
 
 ## Roadmap
 
-- [ ] Custom color picker for backgrounds
-- [ ] Multiple snippets side by side
-- [ ] Language auto-detection from filename extension
-- [ ] Live demo deploy
+- [ ] Persist editor state in Local Storage
+- [ ] Import tables from CSV
+- [ ] More export formats (SVG)
+- [ ] Keyboard shortcuts
+- [ ] More background presets
+
+---
+
+## Contributing
+
+Contributions, ideas and feedback are always welcome.
+
+If you'd like to improve Tabli, feel free to open an issue or submit a pull request.
+
+---
 
 ## License
 
