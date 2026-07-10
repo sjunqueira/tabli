@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import type { ExportFormat } from "../lib/types";
-import { FONT_SIZES } from "../lib/constants";
+import { useRef, useState } from "react";
+import type { ExportFormat, ExportScale, Snapshot } from "../lib/types";
+import { EXPORT_SCALES, FONT_SIZES } from "../lib/constants";
+import { loadHistory } from "../lib/storage";
+import { useTranslations, type TranslationStrings } from "../lib/i18n";
+import { useDismiss } from "../hooks/use-dismiss";
 import Link from "next/link";
 
 interface HeaderProps {
@@ -11,8 +14,33 @@ interface HeaderProps {
   onFontSizeChange: (v: number) => void;
   exportFormat: ExportFormat;
   onExportFormatChange: (v: ExportFormat) => void;
+  exportScale: ExportScale;
+  onExportScaleChange: (v: ExportScale) => void;
   watermark: boolean;
   onWatermarkChange: (v: boolean) => void;
+  onRestoreSnapshot: (snapshot: Snapshot) => void;
+}
+
+function formatRelativeTime(timestamp: number, time: TranslationStrings["time"]): string {
+  const diffSeconds = Math.round((Date.now() - timestamp) / 1000);
+  if (diffSeconds < 5) return time.now;
+  if (diffSeconds < 60) return time.secondsAgo(diffSeconds);
+  const diffMinutes = Math.round(diffSeconds / 60);
+  if (diffMinutes < 60) return time.minutesAgo(diffMinutes);
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return time.hoursAgo(diffHours);
+  const diffDays = Math.round(diffHours / 24);
+  return time.daysAgo(diffDays);
+}
+
+function snapshotPreview(snapshot: Snapshot, emptyLabel: string): string {
+  const raw =
+    snapshot.mode === "code"
+      ? (snapshot.code ?? "").replace(/\s+/g, " ").trim()
+      : [snapshot.table?.headers.join(" | "), snapshot.table?.rows[0]?.join(" | ")]
+          .filter(Boolean)
+          .join(" — ");
+  return raw.length > 70 ? `${raw.slice(0, 70)}…` : raw || emptyLabel;
 }
 
 export function Header({
@@ -20,10 +48,25 @@ export function Header({
   onFontSizeChange,
   exportFormat,
   onExportFormatChange,
+  exportScale,
+  onExportScaleChange,
   watermark,
   onWatermarkChange,
+  onRestoreSnapshot,
 }: HeaderProps) {
+  const { t, locale, setLocale } = useTranslations();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [history, setHistory] = useState<Snapshot[]>([]);
+
+  const settingsRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  useDismiss(settingsRef, isSettingsOpen, () => setIsSettingsOpen(false));
+  useDismiss(infoRef, isInfoOpen, () => setIsInfoOpen(false));
+  useDismiss(historyRef, isHistoryOpen, () => setIsHistoryOpen(false));
 
   const cycleFontSize = () => {
     const currentIndex = FONT_SIZES.indexOf(fontSize);
@@ -33,6 +76,16 @@ export function Header({
 
   const cycleExportFormat = () => {
     onExportFormatChange(exportFormat === "png" ? "jpeg" : "png");
+  };
+
+  const cycleExportScale = () => {
+    const currentIndex = EXPORT_SCALES.indexOf(exportScale);
+    const nextIndex = (currentIndex + 1) % EXPORT_SCALES.length;
+    onExportScaleChange(EXPORT_SCALES[nextIndex]);
+  };
+
+  const cycleLocale = () => {
+    setLocale(locale === "pt-BR" ? "en-US" : "pt-BR");
   };
 
   return (
@@ -50,7 +103,7 @@ export function Header({
         <div className="hidden sm:flex items-center gap-4 mr-2">
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-[#8b8b8b] font-medium uppercase tracking-wider">
-              Copiar
+              {t.header.copy}
             </span>
             <kbd className="text-[10px] text-[#555] font-mono bg-[#111] px-1.5 py-0.5 rounded-sm border border-[#333]">
               ⌘ C
@@ -58,7 +111,7 @@ export function Header({
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-[#8b8b8b] font-medium uppercase tracking-wider">
-              Salvar
+              {t.header.save}
             </span>
             <kbd className="text-[10px] text-[#555] font-mono bg-[#111] px-1.5 py-0.5 rounded-sm border border-[#333]">
               ⌘ S
@@ -68,10 +121,25 @@ export function Header({
 
         <div className="hidden sm:block w-px h-4 bg-[#333]" />
 
-        <div className="relative">
+        <button
+          onClick={() => setIsInfoOpen(true)}
+          title={t.header.info}
+          className="transition-colors p-1.5 rounded hover:bg-[#111] text-[#8b8b8b] hover:text-white"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+            />
+          </svg>
+        </button>
+
+        <div className="relative" ref={settingsRef}>
           <button
             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-            title="Configurações"
+            title={t.header.settings}
             className={`transition-colors p-1.5 rounded hover:bg-[#111] ${
               isSettingsOpen ? "text-white bg-[#111]" : "text-[#8b8b8b]"
             }`}
@@ -90,17 +158,37 @@ export function Header({
             <div className="absolute right-0 top-full mt-2 w-56 bg-[#0a0a0a] border border-[#222] rounded-lg shadow-xl flex flex-col py-2 overflow-hidden">
               <div className="px-3 py-1.5 border-b border-[#222] mb-1">
                 <span className="text-[10px] text-[#555] font-bold uppercase tracking-wider">
-                  Preferências
+                  {t.header.preferences}
                 </span>
               </div>
+
+              <button
+                onClick={cycleLocale}
+                className="flex items-center justify-between px-3 py-2 hover:bg-[#1a1a1a] transition-colors w-full text-left"
+              >
+                <span className="text-xs text-[#8b8b8b]">{t.header.language}</span>
+                <span className="text-[10px] text-white font-medium bg-[#111] px-1.5 py-0.5 rounded border border-[#333] uppercase">
+                  {locale === "pt-BR" ? "PT-BR" : "EN-US"}
+                </span>
+              </button>
 
               <button
                 onClick={cycleExportFormat}
                 className="flex items-center justify-between px-3 py-2 hover:bg-[#1a1a1a] transition-colors w-full text-left"
               >
-                <span className="text-xs text-[#8b8b8b]">Exportar como</span>
+                <span className="text-xs text-[#8b8b8b]">{t.header.exportAs}</span>
                 <span className="text-[10px] text-white font-medium bg-[#111] px-1.5 py-0.5 rounded border border-[#333] uppercase">
                   {exportFormat}
+                </span>
+              </button>
+
+              <button
+                onClick={cycleExportScale}
+                className="flex items-center justify-between px-3 py-2 hover:bg-[#1a1a1a] transition-colors w-full text-left"
+              >
+                <span className="text-xs text-[#8b8b8b]">{t.header.exportScale}</span>
+                <span className="text-[10px] text-white font-medium bg-[#111] px-1.5 py-0.5 rounded border border-[#333] uppercase">
+                  {exportScale}x
                 </span>
               </button>
 
@@ -108,7 +196,7 @@ export function Header({
                 onClick={cycleFontSize}
                 className="flex items-center justify-between px-3 py-2 hover:bg-[#1a1a1a] transition-colors w-full text-left"
               >
-                <span className="text-xs text-[#8b8b8b]">Tamanho da fonte</span>
+                <span className="text-xs text-[#8b8b8b]">{t.header.fontSize}</span>
                 <span className="text-xs text-white font-medium">{fontSize}px</span>
               </button>
 
@@ -116,7 +204,7 @@ export function Header({
                 onClick={() => onWatermarkChange(!watermark)}
                 className="flex items-center justify-between px-3 py-2 hover:bg-[#1a1a1a] transition-colors w-full text-left group"
               >
-                <span className="text-xs text-[#8b8b8b]">Marca d&apos;água</span>
+                <span className="text-xs text-[#8b8b8b]">{t.header.watermark}</span>
                 <div
                   className={`w-6 h-3.5 rounded-full flex items-center px-0.5 border transition-colors ${
                     watermark ? "bg-white/20 border-white/40" : "bg-[#222] border-[#333] group-hover:border-[#555]"
@@ -128,6 +216,20 @@ export function Header({
                     }`}
                   />
                 </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setHistory(loadHistory());
+                  setIsHistoryOpen(true);
+                  setIsSettingsOpen(false);
+                }}
+                className="flex items-center justify-between px-3 py-2 hover:bg-[#1a1a1a] transition-colors w-full text-left"
+              >
+                <span className="text-xs text-[#8b8b8b]">{t.header.history}</span>
+                <svg className="w-3.5 h-3.5 text-[#555]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </button>
             </div>
           )}
@@ -142,10 +244,93 @@ export function Header({
         >
           <Image alt="github-logo" src={"github.svg"} width={24} height={24} className="invert" loading="eager" />
           <span className="text-[#8b8b8b] text-xs font-medium group-hover:text-white transition-colors">
-            Star on GitHub
+            {t.header.starOnGithub}
           </span>
         </Link>
       </nav>
+
+      {isInfoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/70">
+          <div
+            ref={infoRef}
+            className="bg-[#0a0a0a] border border-[#222] rounded-xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#222] shrink-0">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">{t.infoPopup.title}</span>
+              <button
+                onClick={() => setIsInfoOpen(false)}
+                className="text-[#8b8b8b] hover:text-white transition-colors"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-4 flex flex-col gap-3">
+              <p className="text-xs text-[#d4d4d8] leading-relaxed">{t.infoPopup.intro}</p>
+              <p className="text-xs text-[#d4d4d8] leading-relaxed">{t.infoPopup.inspiration}</p>
+              <p className="text-xs text-[#8b8b8b] leading-relaxed">{t.infoPopup.scope}</p>
+
+              <button
+                onClick={() => setIsInfoOpen(false)}
+                className="mt-1 px-4 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors self-start"
+              >
+                {t.infoPopup.close}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isHistoryOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/70">
+          <div
+            ref={historyRef}
+            className="bg-[#0a0a0a] border border-[#222] rounded-xl shadow-2xl w-full max-w-md max-h-[70vh] flex flex-col overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#222] shrink-0">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">{t.header.history}</span>
+              <button
+                onClick={() => setIsHistoryOpen(false)}
+                className="text-[#8b8b8b] hover:text-white transition-colors"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="overflow-y-auto flex-1">
+              {history.length === 0 ? (
+                <p className="text-xs text-[#555] p-6 text-center">{t.header.noSnapshots}</p>
+              ) : (
+                history.map((snapshot) => (
+                  <button
+                    key={snapshot.id}
+                    onClick={() => {
+                      onRestoreSnapshot(snapshot);
+                      setIsHistoryOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 border-b border-[#161616] last:border-b-0 hover:bg-[#141414] transition-colors"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[10px] text-[#8b8b8b] uppercase tracking-wider">
+                        {snapshot.mode === "code" ? t.common.code : t.common.table}
+                      </span>
+                      <span className="text-[10px] text-[#555]">{formatRelativeTime(snapshot.timestamp, t.time)}</span>
+                    </div>
+                    <p className="text-xs text-[#d4d4d8] font-mono truncate">
+                      {snapshotPreview(snapshot, t.common.empty)}
+                    </p>
+                    {snapshot.mode === "code" && (
+                      <p className="text-[10px] text-[#555] mt-0.5">
+                        {snapshot.fileName} · {snapshot.language}
+                      </p>
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

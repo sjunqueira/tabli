@@ -45,3 +45,32 @@ export type PaddingPreset = "tight" | "compact" | "default" | "spacious";
 
 export type Locale = "pt-BR" | "en-US";
 
+export interface Snapshot {
+  id: string;
+  timestamp: number;
+  mode: Mode;
+  code?: string;
+  table?: TableData;
+  fileName: string;
+  language: string;
+}
+
+export interface Preferences {
+  theme: string;
+  padding: PaddingPreset;
+  fontSize: number;
+  exportFormat: ExportFormat;
+  exportScale: ExportScale;
+  watermark: boolean;
+  showLineNumbers: boolean;
+  showWindowControls: boolean;
+  locale: Locale;
+}
+
+export interface ContentState {
+  code: string;
+  table: TableData;
+  fileName: string;
+  language: string;
+  mode: Mode;
+}
