@@ -39,6 +39,8 @@ export interface TableData {
 
 export type ExportFormat = "png" | "jpeg";
 
+export type ExportScale = 2 | 4 | 6;
+
 export type PaddingPreset = "tight" | "compact" | "default" | "spacious";
 
 export type Locale = "pt-BR" | "en-US";

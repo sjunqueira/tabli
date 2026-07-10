@@ -1,4 +1,4 @@
-import { BackgroundId, BackgroundPreset, LanguageOption, PaddingPreset, ThemeOption } from "./types";
+import { BackgroundId, BackgroundPreset, ExportScale, LanguageOption, PaddingPreset, ThemeOption } from "./types";
 
 export const BACKGROUND_PRESETS: BackgroundPreset[] = [
   { id: "transparent", value: "transparent" },
@@ -58,6 +58,7 @@ export const PADDING_PRESETS: { id: PaddingPreset; value: number }[] = [
 export const MAX_CODE_CARD_HEIGHT = 560;
 export const MAX_CARD_HEIGHT = 560;
 export const FONT_SIZES = [12, 13, 14, 15, 16, 18, 20];
+export const EXPORT_SCALES: ExportScale[] = [2, 4, 6];
 
 // a partir daqui a tabela já fica visualmente apertada mesmo que nenhum
 // dado esteja sendo cortado ainda — vale avisar antes de chegar no ponto

@@ -1,21 +1,52 @@
 "use client";
 
-import type { RefObject } from "react";
+import { useEffect, type RefObject } from "react";
 import { useImageExport } from "../hooks/use-image-export";
-import type { ExportFormat } from "../lib/types";
+import { useTranslations } from "../lib/i18n";
+import type { ExportFormat, ExportScale } from "../lib/types";
 
 interface ExportControlsProps {
   targetRef: RefObject<HTMLDivElement | null>;
   fileName?: string;
   format: ExportFormat;
+  scale: ExportScale;
   compact?: boolean;
+  onExportSuccess?: () => void;
 }
 
-export function ExportControls({ targetRef, fileName, format, compact }: ExportControlsProps) {
+function isEditableTarget(el: Element | null): boolean {
+  if (!(el instanceof HTMLElement)) return false;
+  return el.tagName === "TEXTAREA" || el.tagName === "INPUT" || el.isContentEditable;
+}
+
+export function ExportControls({ targetRef, fileName, format, scale, compact, onExportSuccess }: ExportControlsProps) {
+  const { t } = useTranslations();
   const { status, copyImage, downloadImage, fallbackUrl, setFallbackUrl } = useImageExport(
     targetRef,
     format,
+    scale,
+    onExportSuccess,
   );
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isModifier = e.metaKey || e.ctrlKey;
+      if (!isModifier || e.altKey) return;
+      if (isEditableTarget(document.activeElement)) return;
+
+      const key = e.key.toLowerCase();
+      if (key === "c") {
+        e.preventDefault();
+        copyImage();
+      } else if (key === "s") {
+        e.preventDefault();
+        downloadImage(fileName || "snippet");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [copyImage, downloadImage, fileName]);
 
   return (
     <div className={compact ? "flex items-center gap-2" : "p-6 border-t border-[#222] flex flex-col gap-2"}>
@@ -50,9 +81,9 @@ export function ExportControls({ targetRef, fileName, format, compact }: ExportC
             />
           </svg>
         ) : status === "success" ? (
-          "Copied!"
+          t.exportControls.copied
         ) : (
-          "Copy"
+          t.exportControls.copy
         )}
       </button>
       <button
@@ -64,26 +95,26 @@ export function ExportControls({ targetRef, fileName, format, compact }: ExportC
             : "border border-[#333] text-[#d4d4d8] w-full py-2.5 rounded-lg text-sm hover:border-white hover:text-white transition-colors disabled:opacity-60"
         }
       >
-        Baixar
+        {t.exportControls.download}
       </button>
 
       {status === "fallback" && fallbackUrl && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-8 bg-black/90">
           <div className="bg-[#111] p-6 rounded-xl border border-[#333] shadow-2xl max-w-4xl w-full flex flex-col items-center">
-            <h2 className="text-white font-bold mb-2">Sua imagem está pronta!</h2>
+            <h2 className="text-white font-bold mb-2">{t.exportControls.imageReady}</h2>
             <p className="text-[#8b8b8b] text-sm mb-6 text-center">
-              O navegador bloqueou a cópia automática.
+              {t.exportControls.clipboardBlocked}
               <br />
-              Clique com o botão direito na imagem e selecione &quot;Copiar imagem&quot;.
+              {t.exportControls.rightClickHint}
             </p>
             <div className="max-h-[60vh] overflow-auto rounded border border-[#222] bg-black p-2 mb-6">
-              <img src={fallbackUrl} alt="Snippet gerado" className="max-w-full" />
+              <img src={fallbackUrl} alt={t.exportControls.snippetAlt} className="max-w-full" />
             </div>
             <button
               onClick={() => setFallbackUrl(null)}
               className="px-6 py-2 bg-white text-black font-bold rounded-lg hover:bg-gray-200"
             >
-              Fechar
+              {t.exportControls.close}
             </button>
           </div>
         </div>
