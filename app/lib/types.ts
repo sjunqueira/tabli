@@ -21,3 +21,5 @@ export interface TableData {
   headers: string[];
   rows: string[][];
 }
+
+export type ExportFormat = "png" | "jpeg";

@@ -2,24 +2,27 @@
 
 import { useCallback, useState, RefObject } from "react";
 import html2canvas from "html2canvas-pro";
+import type { ExportFormat } from "../lib/types";
 
 type ExportStatus = "idle" | "rendering" | "success" | "error" | "fallback";
 
-export function useImageExport(targetRef: RefObject<HTMLDivElement>) {
+export function useImageExport(targetRef: RefObject<HTMLDivElement | null>, format: ExportFormat) {
   const [status, setStatus] = useState<ExportStatus>("idle");
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
 
-const renderCanvas = useCallback(async () => {
-  if (!targetRef.current) throw new Error("Nada para capturar.");
-  await new Promise((r) => setTimeout(r, 50));
-  return html2canvas(targetRef.current, {
-    scale: 2,
-    backgroundColor: null,
-    logging: false,
-    useCORS: true,
-    ignoreElements: (el) => el.hasAttribute("data-ignore-in-export"),
-  });
-}, [targetRef]);
+  const mimeType = format === "jpeg" ? "image/jpeg" : "image/png";
+
+  const renderCanvas = useCallback(async () => {
+    if (!targetRef.current) throw new Error("Nada para capturar.");
+    await new Promise((r) => setTimeout(r, 50));
+    return html2canvas(targetRef.current, {
+      scale: 2,
+      backgroundColor: format === "jpeg" ? "#000000" : null,
+      logging: false,
+      useCORS: true,
+      ignoreElements: (el) => el.hasAttribute("data-ignore-in-export"),
+    });
+  }, [targetRef, format]);
 
   const copyImage = useCallback(async () => {
     setStatus("rendering");
@@ -28,30 +31,29 @@ const renderCanvas = useCallback(async () => {
       canvas.toBlob(async (blob) => {
         if (!blob) return setStatus("error");
         try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ "image/png": blob }),
-          ]);
+          await navigator.clipboard.write([new ClipboardItem({ [mimeType]: blob })]);
           setStatus("success");
           setTimeout(() => setStatus("idle"), 2000);
         } catch {
-          setFallbackUrl(canvas.toDataURL("image/png"));
+          setFallbackUrl(canvas.toDataURL(mimeType));
           setStatus("fallback");
         }
-      }, "image/png");
+      }, mimeType);
     } catch (err) {
       console.error(err);
       setStatus("error");
     }
-  }, [renderCanvas]);
+  }, [renderCanvas, mimeType]);
 
   const downloadImage = useCallback(
-    async (filename = "snippet.png") => {
+    async (filename = "snippet") => {
       setStatus("rendering");
       try {
         const canvas = await renderCanvas();
+        const ext = format === "jpeg" ? "jpg" : "png";
         const link = document.createElement("a");
-        link.download = filename;
-        link.href = canvas.toDataURL("image/png");
+        link.download = `${filename}.${ext}`;
+        link.href = canvas.toDataURL(mimeType);
         link.click();
         setStatus("success");
         setTimeout(() => setStatus("idle"), 2000);
@@ -60,7 +62,7 @@ const renderCanvas = useCallback(async () => {
         setStatus("error");
       }
     },
-    [renderCanvas]
+    [renderCanvas, mimeType, format],
   );
 
   return { status, copyImage, downloadImage, fallbackUrl, setFallbackUrl };

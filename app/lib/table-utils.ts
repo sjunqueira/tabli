@@ -40,3 +40,9 @@ export function csvToTable(csv: string): TableData {
   const [headers = [], ...rows] = result.data;
   return { headers, rows };
 }
+
+export function parseImportedTable(raw: string): TableData {
+  // heurística simples: markdown de tabela sempre tem "|", CSV geralmente não
+  const looksLikeMarkdown = raw.includes("|");
+  return looksLikeMarkdown ? markdownToTable(raw) : csvToTable(raw);
+}

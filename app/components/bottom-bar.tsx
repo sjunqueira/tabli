@@ -3,7 +3,7 @@
 import { useState, type RefObject } from "react";
 import { BACKGROUND_PRESETS, LANGUAGE_OPTIONS, THEME_OPTIONS } from "../lib/constants";
 import { ExportControls } from "./export-controls";
-import { Mode } from "../lib/types";
+import type { ExportFormat, Mode } from "../lib/types";
 
 interface BottomBarProps {
   mode: Mode;
@@ -18,8 +18,9 @@ interface BottomBarProps {
   setBackground: (v: string) => void;
   padding: number;
   setPadding: (v: number) => void;
-  targetRef: RefObject<HTMLDivElement>;
+  targetRef: RefObject<HTMLDivElement | null>;
   fileName: string;
+  exportFormat: ExportFormat;
 }
 
 export function BottomBar(props: BottomBarProps) {
@@ -27,7 +28,7 @@ export function BottomBar(props: BottomBarProps) {
     mode, setMode, language, setLanguage, theme, setTheme,
     showWindowControls, setShowWindowControls,
     background, setBackground, padding, setPadding,
-    targetRef, fileName,
+    targetRef, fileName, exportFormat,
   } = props;
 
   const [isBgOpen, setIsBgOpen] = useState(false);
@@ -55,7 +56,6 @@ export function BottomBar(props: BottomBarProps) {
 
       <div className="bottom-bar-divider ml-2" />
 
-      {/* Container com animação suave de recolhimento */}
       <div
         className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${
           mode === "code" ? "max-w-[400px] opacity-100" : "max-w-0 opacity-0 pointer-events-none"
@@ -67,13 +67,13 @@ export function BottomBar(props: BottomBarProps) {
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          
+
           <select value={theme} onChange={(e) => setTheme(e.target.value)} className="bottom-bar-select ml-2">
             {THEME_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          
+
           <label className="flex items-center gap-1.5 text-xs text-[#8b8b8b] cursor-pointer px-3">
             <input
               type="checkbox"
@@ -82,7 +82,7 @@ export function BottomBar(props: BottomBarProps) {
             />
             Janela
           </label>
-          
+
           <div className="bottom-bar-divider mr-2" />
         </div>
       </div>
@@ -90,30 +90,31 @@ export function BottomBar(props: BottomBarProps) {
       <div className="relative">
         {(() => {
           const activeBg = BACKGROUND_PRESETS.find((p) => p.value === background) || BACKGROUND_PRESETS[0];
-          
+
           return (
             <button
               type="button"
               onClick={() => setIsBgOpen(!isBgOpen)}
-              className="flex items-center justify-between gap-2 bg-transparent hover:bg-black/20 rounded-md px-2 py-1.5 transition-colors focus:outline-none"
+              className="flex items-center w-[120px] justify-between gap-1.5 bg-transparent hover:bg-black/20 rounded-md px-1.5 py-1.5 transition-colors focus:outline-none"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex flex-1 items-center gap-1.5 min-w-0">
                 <div
-                  className="w-4 h-4 rounded-full border border-[#333]"
+                  className="w-4 h-4 rounded-full border border-[#333] shrink-0"
                   style={{
                     background: activeBg?.value === "transparent"
                       ? "repeating-conic-gradient(#333 0% 25%, #1a1a1a 0% 50%) 50% / 8px 8px"
                       : activeBg?.value,
                   }}
                 />
-                <span className="text-xs text-[#8b8b8b] hover:text-white transition-colors">
+                <span className="text-xs text-[#8b8b8b] hover:text-white transition-colors truncate text-left w-full">
                   {activeBg?.name}
                 </span>
               </div>
-              <svg 
-                className={`w-3.5 h-3.5 text-[#8b8b8b] transition-transform duration-200 ${isBgOpen ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
+
+              <svg
+                className={`w-3.5 h-3.5 shrink-0 text-[#8b8b8b] transition-transform duration-200 ${isBgOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -154,14 +155,19 @@ export function BottomBar(props: BottomBarProps) {
       <div className="bottom-bar-divider mx-2" />
 
       <div className="flex items-center gap-2">
-        <button onClick={() => setPadding(Math.max(0, padding - 16))} className="bottom-bar-step">−</button>
+        <button onClick={() => setPadding(Math.max(16, padding - 16))} className="bottom-bar-step">−</button>
         <span className="text-xs text-[#8b8b8b] w-8 text-center">{padding}px</span>
-        <button onClick={() => setPadding(Math.min(128, padding + 16))} className="bottom-bar-step">+</button>
+        <button onClick={() => setPadding(Math.min(64, padding + 16))} className="bottom-bar-step">+</button>
       </div>
 
       <div className="bottom-bar-divider mx-2" />
 
-      <ExportControls targetRef={targetRef} fileName={fileName.split(".")[0] || "snippet"} compact />
+      <ExportControls
+        targetRef={targetRef}
+        fileName={fileName.split(".")[0] || "snippet"}
+        format={exportFormat}
+        compact
+      />
     </div>
   );
 }

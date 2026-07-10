@@ -30,6 +30,10 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { label: "Plain text", value: "plaintext" },
 ];
 
+export const MAX_CODE_CARD_HEIGHT = 560;
+export const MAX_CARD_HEIGHT = 560;
+export const FONT_SIZES = [12, 13, 14, 15, 16, 18, 20];
+
 export const THEME_OPTIONS: ThemeOption[] = [
   { label: "GitHub Dark", value: "github-dark" },
   { label: "Dracula", value: "dracula" },
@@ -49,8 +53,7 @@ export const DEFAULT_CODE = `function pullMasterSword(hearts: number) {
 }
 
 const linkHearts = 3;
-pullMasterSword(linkHearts);
-`;
+pullMasterSword(linkHearts);`;
 
 export const DEFAULT_MARKDOWN_TABLE = `| Codename | Identity | Equipment | Financial Status |
 | :--- | :--- | :--- | :--- |

@@ -2,16 +2,20 @@
 
 import type { RefObject } from "react";
 import { useImageExport } from "../hooks/use-image-export";
+import type { ExportFormat } from "../lib/types";
 
 interface ExportControlsProps {
-  targetRef: RefObject<HTMLDivElement>;
+  targetRef: RefObject<HTMLDivElement | null>;
   fileName?: string;
+  format: ExportFormat;
   compact?: boolean;
 }
 
-export function ExportControls({ targetRef, fileName, compact }: ExportControlsProps) {
-  const { status, copyImage, downloadImage, fallbackUrl, setFallbackUrl } =
-    useImageExport(targetRef);
+export function ExportControls({ targetRef, fileName, format, compact }: ExportControlsProps) {
+  const { status, copyImage, downloadImage, fallbackUrl, setFallbackUrl } = useImageExport(
+    targetRef,
+    format,
+  );
 
   return (
     <div className={compact ? "flex items-center gap-2" : "p-6 border-t border-[#222] flex flex-col gap-2"}>
@@ -27,7 +31,7 @@ export function ExportControls({ targetRef, fileName, compact }: ExportControlsP
         {status === "rendering" ? "Renderizando..." : status === "success" ? "Copiado!" : "Copiar"}
       </button>
       <button
-        onClick={() => downloadImage(`${fileName || "snippet"}.png`)}
+        onClick={() => downloadImage(fileName || "snippet")}
         disabled={status === "rendering"}
         className={
           compact

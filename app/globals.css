@@ -206,3 +206,12 @@ body {
 .cell-grid td.remove-row button:hover {
   color: #f87171;
 }
+
+.snippet-table input {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+}
