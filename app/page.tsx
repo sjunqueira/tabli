@@ -1,20 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { TableSidebar } from "./components/table-sidebar";
 import { CaptureFrame } from "./components/capture-frame";
 import { CodeToolbar } from "./components/code-toolbar";
 import { useCodeEditorState } from "./hooks/use-code-editor-state";
 import { BACKGROUND_PRESETS, DEFAULT_CODE } from "./lib/constants";
-import type { ExportFormat, Mode, TableData } from "./lib/types";
+import type { ExportFormat, Mode, PaddingPreset, TableData } from "./lib/types";
 import { BottomBar } from "./components/bottom-bar";
 import { Header } from "./components/header";
 import { TableToolbar } from "./components/table-toolbar";
 import { useCardOverflow } from "./hooks/use-card-overflow";
+import { PADDING_PRESETS } from "./lib/constants";
+
 
 export default function Home() {
   const [mode, setMode] = useState<Mode>("code");
   const [isReady, setIsReady] = useState(false);
+
+  
+  const [padding, setPadding] = useState<PaddingPreset>("default");
+  const paddingValue = PADDING_PRESETS.find((p) => p.id === padding)?.value ?? 48;
+
+  const [showLineNumbers, setShowLineNumbers] = useState(false);
 
   const [code, setCode] = useState(DEFAULT_CODE);
   const [language, setLanguage] = useState("typescript");
@@ -37,10 +44,10 @@ export default function Home() {
       ["Thor", "Thor Odinson", "Mjolnir", "🍺 Tab open at the tavern"],
     ],
   });
+  
 
   const tableOverflow = useCardOverflow<HTMLDivElement>();
   const [background, setBackground] = useState(BACKGROUND_PRESETS[1].value);
-  const [padding, setPadding] = useState(64);
 
   const frameRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +57,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-[#f3f4f6]">
-      {/* <TableSidebar table={table} setTable={setTable} isOpen={mode === "table"} /> */}
 
       <main
         className="flex-1 flex items-center justify-center relative"
@@ -78,9 +84,11 @@ export default function Home() {
 
           <CaptureFrame
             ref={frameRef}
+            tableScrollRef={tableOverflow.ref}
             mode={mode}
             background={background}
-            padding={padding}
+            padding={paddingValue}
+            showLineNumbers={showLineNumbers}
             code={code}
             onCodeChange={setCode}
             language={language}
@@ -125,12 +133,14 @@ export default function Home() {
             setLanguage={setLanguage}
             theme={theme}
             setTheme={setTheme}
+            padding={padding}
+            setPadding={setPadding}
+            showLineNumbers={showLineNumbers}
+            setShowLineNumbers={setShowLineNumbers}
             showWindowControls={showWindowControls}
             setShowWindowControls={setShowWindowControls}
             background={background}
             setBackground={setBackground}
-            padding={padding}
-            setPadding={setPadding}
             targetRef={frameRef}
             fileName={fileName}
             exportFormat={exportFormat}

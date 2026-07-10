@@ -28,6 +28,7 @@ interface CaptureFrameProps {
   onCodeResizeStart: (e: React.MouseEvent) => void;
   onCodeReady?: () => void;
   setTable: (t: TableData) => void;
+  showLineNumbers: boolean;
 }
 
 export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
@@ -37,7 +38,7 @@ export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
       fileName, onFileNameChange, showWindowControls, table,
       codeWidth, fontSize, watermark,
       codeCardRef, codeTextareaRef, tableScrollRef,
-      onCodeKeyDown, onCodeResizeStart, onCodeReady, setTable,
+      onCodeKeyDown, onCodeResizeStart, onCodeReady, setTable, showLineNumbers,
     } = props;
 
     return (
@@ -62,6 +63,7 @@ export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
             onKeyDown={onCodeKeyDown}
             onResizeStart={onCodeResizeStart}
             onReady={onCodeReady}
+            showLineNumbers={showLineNumbers}
           />
         ) : (
           <TableSnippet table={table} setTable={setTable} scrollRef={tableScrollRef} />

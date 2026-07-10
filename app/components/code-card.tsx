@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { RefObject } from "react";
 import { codeToHtml } from "shiki";
-import { MAX_CODE_CARD_HEIGHT } from "../lib/constants";
+import { MAX_CARD_HEIGHT } from "../lib/constants";
 
 interface CodeCardProps {
   code: string;
@@ -13,6 +13,7 @@ interface CodeCardProps {
   fileName: string;
   onFileNameChange: (v: string) => void;
   showWindowControls: boolean;
+  showLineNumbers: boolean;
   width: number | "auto";
   fontSize: number;
   cardRef: RefObject<HTMLDivElement | null>;
@@ -30,6 +31,7 @@ export function CodeCard({
   fileName,
   onFileNameChange,
   showWindowControls,
+  showLineNumbers,
   width,
   fontSize,
   cardRef,
@@ -60,7 +62,20 @@ export function CodeCard({
     };
   }, [code, language, theme, onReady]);
 
-  const sharedEditorStyles = "p-6 leading-[1.5] font-mono whitespace-pre break-normal";
+  const GUTTER_WIDTH = 40; // px, cabe até 999 linhas confortavelmente
+  const BASE_PADDING = 24; // equivalente ao antigo p-6
+  const leftPadding = BASE_PADDING + (showLineNumbers ? GUTTER_WIDTH : 0);
+
+  const editorPadding = {
+    paddingTop: BASE_PADDING,
+    paddingBottom: BASE_PADDING,
+    paddingRight: BASE_PADDING,
+    paddingLeft: leftPadding,
+  };
+
+  const sharedEditorStyles = "leading-[1.5] font-mono whitespace-pre break-normal";
+
+  const lineCount = code.split("\n").length;
 
   return (
     <div
@@ -86,9 +101,28 @@ export function CodeCard({
 
       <div
         className="relative w-full overflow-y-auto"
-        style={{ tabSize: 4, maxHeight: `${MAX_CODE_CARD_HEIGHT}px`, fontSize: `${fontSize}px` }}
+        style={{ tabSize: 4, maxHeight: `${MAX_CARD_HEIGHT}px`, fontSize: `${fontSize}px` }}
       >
+        {showLineNumbers && (
+          <div
+            data-ignore-in-export
+            aria-hidden="true"
+            className="absolute left-0 top-0 flex flex-col items-end text-[#4b5563] select-none pointer-events-none"
+            style={{
+              width: `${GUTTER_WIDTH}px`,
+              paddingTop: BASE_PADDING,
+              paddingRight: 12,
+              lineHeight: 1.5,
+            }}
+          >
+            {Array.from({ length: lineCount }, (_, i) => (
+              <span key={i}>{i + 1}</span>
+            ))}
+          </div>
+        )}
+
         <div
+          style={editorPadding}
           className={`pointer-events-none [&>pre]:!bg-transparent [&>pre]:!p-0 [&>pre]:!m-0 ${sharedEditorStyles}`}
           aria-hidden="true"
           dangerouslySetInnerHTML={{ __html: html }}
@@ -100,6 +134,7 @@ export function CodeCard({
           onKeyDown={onKeyDown}
           spellCheck={false}
           data-ignore-in-export
+          style={editorPadding}
           className={`absolute inset-0 w-full h-full resize-none outline-none bg-transparent text-transparent caret-white selection:bg-blue-500/30 overflow-hidden ${sharedEditorStyles}`}
         />
       </div>

@@ -140,7 +140,7 @@ export function Header({
           rel="noopener noreferrer"
           className="group flex items-center gap-2 px-2 py-1.5 rounded-md transition-all"
         >
-          <Image alt="github-logo" src={"github.svg"} width={24} height={24} className="invert" />
+          <Image alt="github-logo" src={"github.svg"} width={24} height={24} className="invert" loading="eager" />
           <span className="text-[#8b8b8b] text-xs font-medium group-hover:text-white transition-colors">
             Star on GitHub
           </span>

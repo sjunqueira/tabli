@@ -23,3 +23,5 @@ export interface TableData {
 }
 
 export type ExportFormat = "png" | "jpeg";
+
+export type PaddingPreset = "tight" | "compact" | "default" | "spacious";

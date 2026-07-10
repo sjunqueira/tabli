@@ -1,4 +1,4 @@
-import { BackgroundPreset, LanguageOption, ThemeOption } from "./types";
+import { BackgroundPreset, LanguageOption, PaddingPreset, ThemeOption } from "./types";
 
 export const BACKGROUND_PRESETS: BackgroundPreset[] = [
   { name: "Transparente", value: "transparent" },
@@ -28,6 +28,14 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { label: "HTML", value: "html" },
   { label: "CSS", value: "css" },
   { label: "Plain text", value: "plaintext" },
+];
+
+
+export const PADDING_PRESETS: { id: PaddingPreset; label: string; value: number }[] = [
+  { id: "tight", label: "Tight", value: 16 },
+  { id: "compact", label: "Compact", value: 32 },
+  { id: "default", label: "Default", value: 48 },
+  { id: "spacious", label: "Spacious", value: 64 },
 ];
 
 export const MAX_CODE_CARD_HEIGHT = 560;

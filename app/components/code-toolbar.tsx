@@ -23,14 +23,14 @@ export function CodeToolbar({
             onClick={onResetWidth}
             className="text-[10px] text-[#555] hover:text-[#8b8b8b] transition-colors uppercase tracking-widest font-bold"
           >
-            ← Auto-ajuste
+            ← Auto-adjustment
           </button>
         )}
         <button
           onClick={onFormat}
           className="text-[10px] text-[#555] hover:text-[#8b8b8b] transition-colors uppercase tracking-widest font-bold"
         >
-          Formatar código
+          Format Code
         </button>
       </div>
 

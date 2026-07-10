@@ -11,8 +11,8 @@ interface TableToolbarProps {
 
 export function TableToolbar({ isOverflowingWidth, isOverflowingHeight, onImport }: TableToolbarProps) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <TableImport onImport={onImport} />
+    <div className="flex flex-col w-full max-w-full min-w-[560px] items-center gap-2">
+      <TableImport onImport={onImport}/>
 
       {isOverflowingWidth && (
         <div className="flex items-center gap-2 text-[10px] text-yellow-600/80 bg-yellow-500/5 px-3 py-1.5 rounded-md border border-yellow-500/10">
