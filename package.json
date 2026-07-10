@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "highlight.js": "^11.11.1",
     "html2canvas-pro": "^2.2.3",
     "next": "16.2.10",
     "papaparse": "^5.5.4",
+    "prettier": "^3.9.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0",
