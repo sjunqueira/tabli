@@ -42,6 +42,14 @@ export const MAX_CODE_CARD_HEIGHT = 560;
 export const MAX_CARD_HEIGHT = 560;
 export const FONT_SIZES = [12, 13, 14, 15, 16, 18, 20];
 
+export const CARD_MIN_WIDTH = 420;
+// a partir daqui o card ainda cabe (cresce até o limite real), mas já
+// avisamos que imagens muito grandes tendem a não ficar tão boas
+export const CARD_SOFT_MAX_WIDTH = 900;
+// limite real — a partir daqui o conteúdo não cabe mais e a imagem exportada
+// é cortada
+export const CARD_HARD_MAX_WIDTH = 1200;
+
 export const THEME_OPTIONS: ThemeOption[] = [
   { label: "GitHub Dark", value: "github-dark" },
   { label: "Dracula", value: "dracula" },
