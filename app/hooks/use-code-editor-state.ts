@@ -128,19 +128,33 @@ export function useCodeEditorState(
     }
   }, [code, language, onCodeChange, showFormatFeedback, t]);
 
-  // auto-grow vertical da textarea (altura acompanha o conteúdo, sem cap —
-  // quem limita visualmente é o wrapper com max-h + overflow no CodeCard)
+  // auto-grow vertical E horizontal da textarea (altura/largura acompanham o
+  // conteúdo, sem cap — quem limita visualmente é o wrapper com max-h/overflow
+  // no CodeCard). O auto-grow horizontal existe pelo mesmo motivo do
+  // vertical: sem ele, a textarea mantém largura fixa (100% do card) e o
+  // navegador passa a rolar seu conteúdo internamente (scrollLeft próprio,
+  // invisível já que overflow é hidden) pra manter o cursor visível — um
+  // scroll INDEPENDENTE do scroll do wrapper que desenha o overlay colorido.
+  // Os dois scrolls divergem (ex: cursor no fim de uma linha gigante) e o
+  // clique passa a cair num ponto do texto diferente do que é mostrado.
+  // Deixando a própria textarea crescer até a largura natural do conteúdo,
+  // ela nunca precisa desse scroll interno — só o wrapper rola, e overlay e
+  // textarea ficam sempre alinhados.
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
+    el.style.width = "auto";
+    el.style.width = `${el.scrollWidth}px`;
   }, [code]);
 
-  // detecção de overflow horizontal E vertical via ResizeObserver — reage a
-  // qualquer mudança real de layout (digitação, resize manual, ou o card
-  // assentando de tamanho depois que o Shiki termina de colorir o código),
-  // em vez de depender só de quando `code` muda (causava falso positivo no load)
+  // detecção de overflow horizontal e vertical — recalcula tanto quando o
+  // código muda (cobre o caso de colar uma linha muito longa sem adicionar
+  // linhas novas, que não altera a altura/box da textarea e portanto não
+  // dispara o ResizeObserver abaixo) quanto via ResizeObserver (cobre resize
+  // manual do card e o assentamento de tamanho depois que o Shiki termina de
+  // colorir o código)
   //
   // scrollWidth reflete a largura natural do conteúdo mesmo quando ele ainda
   // cabe (o card cresce até o limite pra acomodá-lo), então comparamos contra
@@ -165,7 +179,7 @@ export function useCodeEditorState(
     observer.observe(el);
 
     return () => observer.disconnect();
-  }, []);
+  }, [code]);
 
   return {
     textareaRef,
