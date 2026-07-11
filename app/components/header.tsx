@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ExportFormat, ExportScale, Snapshot } from "../lib/types";
 import { EXPORT_SCALES, FONT_SIZES } from "../lib/constants";
 import { loadHistory } from "../lib/storage";
 import { useTranslations, type TranslationStrings } from "../lib/i18n";
 import { useDismiss } from "../hooks/use-dismiss";
+import { isEditableTarget } from "../lib/dom";
+import { ModifierKey } from "./modifier-key";
 import Link from "next/link";
 
 interface HeaderProps {
@@ -39,8 +41,25 @@ function snapshotPreview(snapshot: Snapshot, emptyLabel: string): string {
       ? (snapshot.code ?? "").replace(/\s+/g, " ").trim()
       : [snapshot.table?.headers.join(" | "), snapshot.table?.rows[0]?.join(" | ")]
           .filter(Boolean)
-          .join(" — ");
+          .join(" · ");
   return raw.length > 70 ? `${raw.slice(0, 70)}…` : raw || emptyLabel;
+}
+
+function Kbd({ children }: { children: React.ReactNode }) {
+  return (
+    <kbd className="min-w-[1.25rem] text-center text-[10px] text-[#d4d4d8] font-mono bg-[#111] px-1.5 py-0.5 rounded-sm border border-[#333]">
+      {children}
+    </kbd>
+  );
+}
+
+function ShortcutRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-xs text-[#8b8b8b]">{label}</span>
+      <div className="flex items-center gap-1 shrink-0">{children}</div>
+    </div>
+  );
 }
 
 export function Header({
@@ -67,6 +86,17 @@ export function Header({
   useDismiss(settingsRef, isSettingsOpen, () => setIsSettingsOpen(false));
   useDismiss(infoRef, isInfoOpen, () => setIsInfoOpen(false));
   useDismiss(historyRef, isHistoryOpen, () => setIsHistoryOpen(false));
+
+  // "?" abre o popup de atalhos/sobre, igual ao ray.so
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "?" || isEditableTarget(document.activeElement)) return;
+      e.preventDefault();
+      setIsInfoOpen(true);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const cycleFontSize = () => {
     const currentIndex = FONT_SIZES.indexOf(fontSize);
@@ -100,27 +130,6 @@ export function Header({
       </div>
 
       <nav className="flex items-center gap-4">
-        <div className="hidden sm:flex items-center gap-4 mr-2">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-[#8b8b8b] font-medium uppercase tracking-wider">
-              {t.header.copy}
-            </span>
-            <kbd className="text-[10px] text-[#555] font-mono bg-[#111] px-1.5 py-0.5 rounded-sm border border-[#333]">
-              ⌘ C
-            </kbd>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-[#8b8b8b] font-medium uppercase tracking-wider">
-              {t.header.save}
-            </span>
-            <kbd className="text-[10px] text-[#555] font-mono bg-[#111] px-1.5 py-0.5 rounded-sm border border-[#333]">
-              ⌘ S
-            </kbd>
-          </div>
-        </div>
-
-        <div className="hidden sm:block w-px h-4 bg-[#333]" />
-
         <button
           onClick={() => setIsInfoOpen(true)}
           title={t.header.info}
@@ -253,29 +262,105 @@ export function Header({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/70">
           <div
             ref={infoRef}
-            className="bg-[#0a0a0a] border border-[#222] rounded-xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden"
+            className="relative bg-[#0a0a0a] border border-[#222] rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col sm:flex-row overflow-hidden"
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#222] shrink-0">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">{t.infoPopup.title}</span>
-              <button
-                onClick={() => setIsInfoOpen(false)}
-                className="text-[#8b8b8b] hover:text-white transition-colors"
-              >
-                ×
-              </button>
-            </div>
+            <button
+              onClick={() => setIsInfoOpen(false)}
+              aria-label={t.exportControls.close}
+              className="absolute right-3 top-3 z-10 w-6 h-6 flex items-center justify-center rounded-full border border-[#333] text-[#8b8b8b] hover:text-white hover:border-[#555] transition-colors"
+            >
+              ×
+            </button>
 
-            <div className="p-4 flex flex-col gap-3">
+            <div className="flex-1 p-5 flex flex-col gap-3 overflow-y-auto">
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider">{t.infoPopup.aboutTitle}</h2>
               <p className="text-xs text-[#d4d4d8] leading-relaxed">{t.infoPopup.intro}</p>
               <p className="text-xs text-[#d4d4d8] leading-relaxed">{t.infoPopup.inspiration}</p>
               <p className="text-xs text-[#8b8b8b] leading-relaxed">{t.infoPopup.scope}</p>
 
-              <button
-                onClick={() => setIsInfoOpen(false)}
-                className="mt-1 px-4 py-2 bg-white text-black text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors self-start"
-              >
-                {t.infoPopup.close}
-              </button>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mt-2">
+                {t.infoPopup.contributeTitle}
+              </h3>
+              <p className="text-xs text-[#8b8b8b] leading-relaxed">
+                {t.infoPopup.contribute}{" "}
+                <Link
+                  href="https://github.com/sjunqueira/tabli"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-[#d4d4d8] hover:text-white"
+                >
+                  GitHub
+                </Link>
+                .
+              </p>
+              <p className="text-xs text-[#8b8b8b] leading-relaxed">
+                {t.infoPopup.starCta}{" "}
+                <Link
+                  href="https://github.com/sjunqueira/tabli"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-[#d4d4d8] hover:text-white"
+                >
+                  GitHub
+                </Link>
+                .
+              </p>
+
+              <p className="text-[10px] text-[#444] leading-relaxed mt-1">{t.infoPopup.coffeeNote}</p>
+            </div>
+
+            <div className="hidden sm:block w-px bg-[#222]" />
+            <div className="block sm:hidden h-px bg-[#222]" />
+
+            <div className="sm:w-56 shrink-0 p-5 flex flex-col gap-2.5 overflow-y-auto">
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-1">
+                {t.infoPopup.shortcutsTitle}
+              </h2>
+
+              <ShortcutRow label={t.shortcuts.focusEditor}>
+                <Kbd>F</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.unfocusEditor}>
+                <Kbd>Esc</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.changeColors}>
+                <Kbd>C</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.toggleBackground}>
+                <Kbd>B</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.toggleLineNumbers}>
+                <Kbd>N</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.changePadding}>
+                <Kbd>P</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.selectLanguage}>
+                <Kbd>L</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.toggleWindowControls}>
+                <Kbd>W</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.formatCode}>
+                <Kbd>⌥</Kbd>
+                <Kbd>⇧</Kbd>
+                <Kbd>F</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.copyImage}>
+                <Kbd>
+                  <ModifierKey />
+                </Kbd>
+                <Kbd>C</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.saveImage}>
+                <Kbd>
+                  <ModifierKey />
+                </Kbd>
+                <Kbd>S</Kbd>
+              </ShortcutRow>
+              <ShortcutRow label={t.shortcuts.openShortcuts}>
+                <Kbd>?</Kbd>
+              </ShortcutRow>
             </div>
           </div>
         </div>

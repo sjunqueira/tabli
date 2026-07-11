@@ -6,11 +6,13 @@ import { CodeToolbar } from "./components/code-toolbar";
 import { ResizeIndicator } from "./components/resize-indicator";
 import { useCodeEditorState } from "./hooks/use-code-editor-state";
 import { useCardResize } from "./hooks/use-card-resize";
+import { useKeyboardShortcuts } from "./hooks/use-keyboard-shortcuts";
 import {
   CARD_HARD_MAX_WIDTH,
   CARD_MIN_WIDTH,
   DEFAULT_CODE,
   EDITOR_THEMES,
+  LANGUAGE_OPTIONS,
   MIN_COLUMN_WIDTH,
   TABLE_CELL_PADDING_X,
 } from "./lib/constants";
@@ -188,6 +190,41 @@ export default function Home() {
     [pinLanguage],
   );
 
+  const cycleTheme = useCallback(() => {
+    setThemeId((current) => {
+      const idx = EDITOR_THEMES.findIndex((theme) => theme.id === current);
+      return EDITOR_THEMES[(idx + 1) % EDITOR_THEMES.length].id;
+    });
+  }, []);
+
+  const cyclePadding = useCallback(() => {
+    setPadding((current) => {
+      const idx = PADDING_PRESETS.findIndex((preset) => preset.id === current);
+      return PADDING_PRESETS[(idx + 1) % PADDING_PRESETS.length].id;
+    });
+  }, []);
+
+  const cycleLanguage = useCallback(() => {
+    const idx = LANGUAGE_OPTIONS.findIndex((opt) => opt.value === language);
+    handleLanguageChange(LANGUAGE_OPTIONS[(idx + 1) % LANGUAGE_OPTIONS.length].value);
+  }, [language, handleLanguageChange]);
+
+  const focusCodeEditor = useCallback(() => {
+    codeEditor.textareaRef.current?.focus();
+  }, [codeEditor.textareaRef]);
+
+  useKeyboardShortcuts({
+    mode,
+    onFocusEditor: focusCodeEditor,
+    onCycleTheme: cycleTheme,
+    onToggleBackground: () => setShowBackground((v) => !v),
+    onToggleLineNumbers: () => setShowLineNumbers((v) => !v),
+    onCyclePadding: cyclePadding,
+    onCycleLanguage: cycleLanguage,
+    onFormatCode: codeEditor.formatCode,
+    onToggleWindowControls: () => setShowWindowControls((v) => !v),
+  });
+
   // em vez de só limpar columnWidths (o que joga a tabela de volta pro
   // layout automático do navegador, que divide o espaço igualmente entre
   // colunas e corta as com conteúdo mais longo), calcula uma largura
@@ -286,7 +323,7 @@ export default function Home() {
             isReady ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
           }`}
         >
-          <div className="absolute top-0 left-0 w-full z-10">
+          <div className="absolute top-0 left-0 w-full z-[100]">
             <Header
               fontSize={fontSize}
               onFontSizeChange={setFontSize}
