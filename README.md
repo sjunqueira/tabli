@@ -20,29 +20,45 @@
   <img src=".github/assets/app.png" alt="Tabli application">
 </p>
 
-Tabli is a lightweight tool for creating polished images from code snippets and structured tables. Everything runs locally in your browser—no account required, no uploads, no distractions.
+Tabli is a lightweight tool for creating polished images from code snippets and structured tables. Everything runs locally in your browser. No account, no uploads, no server processing.
 
 ## Features
 
 ### Code snippets
 
-- ✨ Syntax highlighting powered by Shiki
-- 📝 Inline editing with live preview
-- 📄 Editable filename
-- 🌐 Multiple languages and themes
-- 🎨 Custom backgrounds and adjustable padding
+- ✨ Syntax highlighting powered by Shiki, with automatic language detection as you type
+- 🪄 One-click formatting via Prettier
+- 📝 Inline editing with live preview and an editable filename
+- 🔢 Optional line numbers and window controls
+- ↔️ Drag-to-resize card from either edge, with auto-fit back to content
+- 🔠 Adjustable font size and padding presets
 
 ### Tables
 
-- 📊 Dedicated table editor
-- ➕ Add, edit and remove rows or columns
-- 📷 Export presentation-ready tables
+- 📊 Dedicated table editor with inline cell editing
+- ➕ Add or remove rows and columns
+- 📥 Import from CSV (powered by Papa Parse)
+- ↔️ Per-column resizing, with a one-click width auto-fit
+- ⚠️ Overflow warnings when content stops fitting cleanly
+
+### Themes
+
+- 🎨 18 curated editor themes, each pairing a canvas gradient, card background, Shiki syntax theme, and table header accent so everything matches
+- 🔲 Toggle the canvas background on or off independently of the theme
 
 ### Export
 
 - 📋 Copy directly to your clipboard
-- 💾 Download as PNG
+- 💾 Download as PNG or JPEG, at 2x, 4x, or 6x scale
+- 🖋️ Optional "Made with Tabli" watermark
 - ⚡ High-quality rendering powered by `html2canvas-pro`
+
+### Workspace
+
+- 💾 Preferences and current content persist locally, so a refresh never loses your work
+- 🕘 Snapshot history to restore a previous code snippet or table
+- ⌨️ Keyboard shortcuts for focusing the editor, cycling theme/padding/language, formatting, toggling line numbers/background/window controls, and exporting
+- 🌐 Interface available in Portuguese (pt-BR) and English (en-US), detected automatically from the browser
 
 ---
 
@@ -76,17 +92,13 @@ Open `http://localhost:3000`.
 
 ## Roadmap
 
-- [ ] Persist workspace using Local Storage
-- [ ] CSV import for tables
-- [ ] SVG export
-- [ ] Keyboard shortcuts
-- [ ] Additional background presets
+- [ ] More languages
 
 ---
 
 ## Built with AI
 
-Tabli was developed with the assistance of AI tools throughout the development process—from brainstorming and UI iterations to implementation support and code review. Design decisions, architecture, and the final implementation were curated and validated by the author.
+Tabli was developed with the assistance of AI tools throughout the development process, from brainstorming and UI iterations to implementation support and code review. Design decisions, architecture, and the final implementation were curated and validated by the author.
 
 ---
 
