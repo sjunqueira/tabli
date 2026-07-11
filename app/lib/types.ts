@@ -1,29 +1,41 @@
 export type Mode = "code" | "table";
 
-export type BackgroundId =
-  | "transparent"
-  | "indigo"
-  | "blue"
-  | "emerald"
-  | "green"
-  | "pink"
-  | "red"
-  | "yellow"
-  | "black"
-  | "gray"
-  | "white";
+export type EditorThemeId =
+  | "github-dark"
+  | "dracula"
+  | "one-dark-pro"
+  | "nord"
+  | "vitesse-dark"
+  | "min-dark"
+  | "ayu-dark"
+  | "noir"
+  | "ice"
+  | "sand"
+  | "forest"
+  | "mono"
+  | "breeze"
+  | "candy"
+  | "crimson"
+  | "falcon"
+  | "meadow"
+  | "midnight";
 
-export interface BackgroundPreset {
-  id: BackgroundId;
-  value: string;
+// um tema unifica: gradiente do canvas atrás do card, fundo do próprio card
+// (com um leve toque de transparência, pra deixar o card com um ar de vidro
+// fosco sobre o canvas), tema do Shiki pra colorir o código e cor de
+// destaque do cabeçalho da tabela — a paleta é curada à mão por tema (não
+// precisa bater 1:1 com o catálogo de temas do Shiki), então IDE e fundo
+// nunca destoam
+export interface EditorTheme {
+  id: EditorThemeId;
+  shikiTheme: string;
+  canvasBackground: string;
+  cardBackground: string;
+  tableHeaderBg: string;
+  tableHeaderText: string;
 }
 
 export interface LanguageOption {
-  label: string;
-  value: string;
-}
-
-export interface ThemeOption {
   label: string;
   value: string;
 }
@@ -56,7 +68,8 @@ export interface Snapshot {
 }
 
 export interface Preferences {
-  theme: string;
+  theme: EditorThemeId;
+  showBackground: boolean;
   padding: PaddingPreset;
   fontSize: number;
   exportFormat: ExportFormat;

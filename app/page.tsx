@@ -7,14 +7,23 @@ import { ResizeIndicator } from "./components/resize-indicator";
 import { useCodeEditorState } from "./hooks/use-code-editor-state";
 import { useCardResize } from "./hooks/use-card-resize";
 import {
-  BACKGROUND_PRESETS,
   CARD_HARD_MAX_WIDTH,
   CARD_MIN_WIDTH,
   DEFAULT_CODE,
+  EDITOR_THEMES,
   MIN_COLUMN_WIDTH,
   TABLE_CELL_PADDING_X,
 } from "./lib/constants";
-import type { ExportFormat, ExportScale, Locale, Mode, PaddingPreset, Snapshot, TableData } from "./lib/types";
+import type {
+  EditorThemeId,
+  ExportFormat,
+  ExportScale,
+  Locale,
+  Mode,
+  PaddingPreset,
+  Snapshot,
+  TableData,
+} from "./lib/types";
 import { BottomBar } from "./components/bottom-bar";
 import { Header } from "./components/header";
 import { TableToolbar } from "./components/table-toolbar";
@@ -28,7 +37,7 @@ export default function Home() {
   const [mode, setMode] = useState<Mode>("code");
   const [isReady, setIsReady] = useState(false);
 
-  
+
   const [padding, setPadding] = useState<PaddingPreset>("default");
   const paddingValue = PADDING_PRESETS.find((p) => p.id === padding)?.value ?? 48;
 
@@ -36,7 +45,10 @@ export default function Home() {
 
   const [code, setCode] = useState(DEFAULT_CODE);
   const [language, setLanguage] = useState("typescript");
-  const [theme, setTheme] = useState("github-dark");
+  const [themeId, setThemeId] = useState<EditorThemeId>("github-dark");
+  const [showBackground, setShowBackground] = useState(true);
+  const activeTheme = EDITOR_THEMES.find((t) => t.id === themeId) ?? EDITOR_THEMES[0];
+  const canvasBackground = showBackground ? activeTheme.canvasBackground : "transparent";
   const [fileName, setFileName] = useState("heroes.ts");
   const [showWindowControls, setShowWindowControls] = useState(true);
 
@@ -59,12 +71,11 @@ export default function Home() {
       ["Thor", "Thor Odinson", "Mjolnir", "🍺 Tab open at the tavern"],
     ],
   });
-  
+
 
   const tableOverflow = useTableOverflow(table);
   const tableCardRef = useRef<HTMLDivElement>(null);
   const tableResize = useCardResize(tableCardRef);
-  const [background, setBackground] = useState(BACKGROUND_PRESETS[1].value);
 
   const frameRef = useRef<HTMLDivElement>(null);
   const hasRestoredRef = useRef(false);
@@ -77,7 +88,8 @@ export default function Home() {
   useEffect(() => {
     const prefs = loadPreferences();
     if (prefs) {
-      if (prefs.theme !== undefined) setTheme(prefs.theme);
+      if (prefs.theme !== undefined) setThemeId(prefs.theme);
+      if (prefs.showBackground !== undefined) setShowBackground(prefs.showBackground);
       if (prefs.padding !== undefined) setPadding(prefs.padding);
       if (prefs.fontSize !== undefined) setFontSize(prefs.fontSize);
       if (prefs.exportFormat !== undefined) setExportFormat(prefs.exportFormat);
@@ -109,7 +121,8 @@ export default function Home() {
   useEffect(() => {
     if (!hasRestoredRef.current) return;
     savePreferences({
-      theme,
+      theme: themeId,
+      showBackground,
       padding,
       fontSize,
       exportFormat,
@@ -119,7 +132,18 @@ export default function Home() {
       showWindowControls,
       locale,
     });
-  }, [theme, padding, fontSize, exportFormat, exportScale, watermark, showLineNumbers, showWindowControls, locale]);
+  }, [
+    themeId,
+    showBackground,
+    padding,
+    fontSize,
+    exportFormat,
+    exportScale,
+    watermark,
+    showLineNumbers,
+    showWindowControls,
+    locale,
+  ]);
 
   // persiste conteúdo atual sempre que muda
   useEffect(() => {
@@ -280,13 +304,16 @@ export default function Home() {
             ref={frameRef}
             tableScrollRef={tableOverflow.ref}
             mode={mode}
-            background={background}
+            background={canvasBackground}
+            cardBackground={activeTheme.cardBackground}
+            tableHeaderBg={activeTheme.tableHeaderBg}
+            tableHeaderText={activeTheme.tableHeaderText}
             padding={paddingValue}
             showLineNumbers={showLineNumbers}
             code={code}
             onCodeChange={setCode}
             language={language}
-            theme={theme}
+            theme={activeTheme.shikiTheme}
             fileName={fileName}
             onFileNameChange={setFileName}
             showWindowControls={showWindowControls}
@@ -347,16 +374,16 @@ export default function Home() {
             setMode={handleModeChange}
             language={language}
             setLanguage={handleLanguageChange}
-            theme={theme}
-            setTheme={setTheme}
+            themeId={themeId}
+            setThemeId={setThemeId}
+            showBackground={showBackground}
+            setShowBackground={setShowBackground}
             padding={padding}
             setPadding={setPadding}
             showLineNumbers={showLineNumbers}
             setShowLineNumbers={setShowLineNumbers}
             showWindowControls={showWindowControls}
             setShowWindowControls={setShowWindowControls}
-            background={background}
-            setBackground={setBackground}
             targetRef={frameRef}
             fileName={fileName}
             exportFormat={exportFormat}

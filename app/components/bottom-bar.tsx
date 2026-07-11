@@ -1,25 +1,25 @@
 "use client";
 
 import { useState, type RefObject } from "react";
-import { BACKGROUND_PRESETS, LANGUAGE_OPTIONS, THEME_OPTIONS, PADDING_PRESETS } from "../lib/constants";
+import { EDITOR_THEMES, LANGUAGE_OPTIONS, PADDING_PRESETS } from "../lib/constants";
 import { ExportControls } from "./export-controls";
 import { LanguageIcon } from "../lib/language-icons";
 import { useTranslations } from "../lib/i18n";
-import type { ExportFormat, ExportScale, Mode, PaddingPreset } from "../lib/types";
+import type { EditorThemeId, ExportFormat, ExportScale, Mode, PaddingPreset } from "../lib/types";
 
 interface BottomBarProps {
   mode: Mode;
   setMode: (m: Mode) => void;
   language: string;
   setLanguage: (v: string) => void;
-  theme: string;
-  setTheme: (v: string) => void;
+  themeId: EditorThemeId;
+  setThemeId: (v: EditorThemeId) => void;
+  showBackground: boolean;
+  setShowBackground: (v: boolean) => void;
   showWindowControls: boolean;
   setShowWindowControls: (v: boolean) => void;
   showLineNumbers: boolean;
   setShowLineNumbers: (v: boolean) => void;
-  background: string;
-  setBackground: (v: string) => void;
   padding: PaddingPreset;
   setPadding: (v: PaddingPreset) => void;
   targetRef: RefObject<HTMLDivElement | null>;
@@ -29,17 +29,47 @@ interface BottomBarProps {
   onExportSuccess?: () => void;
 }
 
+interface SwitchToggleProps {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}
+
+function SwitchToggle({ label, checked, onChange }: SwitchToggleProps) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className="group flex items-center gap-1.5 whitespace-nowrap px-1.5 py-1.5 rounded-md hover:bg-black/20 transition-colors"
+    >
+      <span className="text-xs text-[#8b8b8b] group-hover:text-white transition-colors">{label}</span>
+      <div
+        className={`w-6 h-3.5 rounded-full flex items-center px-0.5 border transition-colors shrink-0 ${
+          checked ? "bg-white/20 border-white/40" : "bg-[#222] border-[#333] group-hover:border-[#555]"
+        }`}
+      >
+        <div
+          className={`w-2.5 h-2.5 rounded-full transition-transform ${
+            checked ? "bg-white translate-x-2.5" : "bg-[#8b8b8b] translate-x-0"
+          }`}
+        />
+      </div>
+    </button>
+  );
+}
+
 export function BottomBar(props: BottomBarProps) {
   const {
-    mode, setMode, language, setLanguage, theme, setTheme,
+    mode, setMode, language, setLanguage, themeId, setThemeId,
+    showBackground, setShowBackground,
     showWindowControls, setShowWindowControls,
     showLineNumbers, setShowLineNumbers,
-    background, setBackground, padding, setPadding,
+    padding, setPadding,
     targetRef, fileName, exportFormat, exportScale, onExportSuccess,
   } = props;
 
   const { t } = useTranslations();
-  const [isBgOpen, setIsBgOpen] = useState(false);
+  const [isThemeOpen, setIsThemeOpen] = useState(false);
   const [isPaddingOpen, setIsPaddingOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
 
@@ -118,61 +148,44 @@ export function BottomBar(props: BottomBarProps) {
           mode === "code" ? "max-w-[460px] opacity-100" : "max-w-0 opacity-0 pointer-events-none"
         }`}
       >
-        <div className="flex items-center whitespace-nowrap">
-          <select value={theme} onChange={(e) => setTheme(e.target.value)} className="bottom-bar-select">
-            {THEME_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
+        <div className="flex items-center whitespace-nowrap gap-1">
+          <SwitchToggle
+            label={t.bottomBar.windowControls}
+            checked={showWindowControls}
+            onChange={setShowWindowControls}
+          />
+          <SwitchToggle label={t.bottomBar.lineNumbers} checked={showLineNumbers} onChange={setShowLineNumbers} />
 
-          <label className="flex items-center gap-1.5 text-xs text-[#8b8b8b] cursor-pointer px-3">
-            <input
-              type="checkbox"
-              checked={showWindowControls}
-              onChange={(e) => setShowWindowControls(e.target.checked)}
-            />
-            {t.bottomBar.windowControls}
-          </label>
-
-          <label className="flex items-center gap-1.5 text-xs text-[#8b8b8b] cursor-pointer pr-3">
-            <input
-              type="checkbox"
-              checked={showLineNumbers}
-              onChange={(e) => setShowLineNumbers(e.target.checked)}
-            />
-            {t.bottomBar.lineNumbers}
-          </label>
-
-          <div className="bottom-bar-divider mr-2" />
+          <div className="bottom-bar-divider mx-1" />
         </div>
       </div>
 
+      <SwitchToggle label={t.bottomBar.background} checked={showBackground} onChange={setShowBackground} />
+
+      <div className="bottom-bar-divider mx-2" />
+
       <div className="relative">
         {(() => {
-          const activeBg = BACKGROUND_PRESETS.find((p) => p.value === background) || BACKGROUND_PRESETS[0];
+          const activeTheme = EDITOR_THEMES.find((t) => t.id === themeId) || EDITOR_THEMES[0];
 
           return (
             <button
               type="button"
-              onClick={() => setIsBgOpen(!isBgOpen)}
-              className="flex items-center w-[120px] justify-between gap-1.5 bg-transparent hover:bg-black/20 rounded-md px-1.5 py-1.5 transition-colors focus:outline-none"
+              onClick={() => setIsThemeOpen(!isThemeOpen)}
+              className="flex items-center w-[140px] justify-between gap-1.5 bg-transparent hover:bg-black/20 rounded-md px-1.5 py-1.5 transition-colors focus:outline-none"
             >
               <div className="flex flex-1 items-center gap-1.5 min-w-0">
                 <div
                   className="w-4 h-4 rounded-full border border-[#333] shrink-0"
-                  style={{
-                    background: activeBg?.value === "transparent"
-                      ? "repeating-conic-gradient(#333 0% 25%, #1a1a1a 0% 50%) 50% / 8px 8px"
-                      : activeBg?.value,
-                  }}
+                  style={{ background: activeTheme.canvasBackground }}
                 />
                 <span className="text-xs text-[#8b8b8b] hover:text-white transition-colors truncate text-left w-full">
-                  {t.backgrounds[activeBg.id]}
+                  {t.themes[activeTheme.id]}
                 </span>
               </div>
 
               <svg
-                className={`w-3.5 h-3.5 shrink-0 text-[#8b8b8b] transition-transform duration-200 ${isBgOpen ? "rotate-180" : ""}`}
+                className={`w-3.5 h-3.5 shrink-0 text-[#8b8b8b] transition-transform duration-200 ${isThemeOpen ? "rotate-180" : ""}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -183,29 +196,25 @@ export function BottomBar(props: BottomBarProps) {
           );
         })()}
 
-        {isBgOpen && (
-          <div className="absolute bottom-full left-0 mb-1 w-40 bg-[#0a0a0a] border border-[#222] rounded-lg shadow-xl z-50 flex flex-col py-1 overflow-hidden">
-            {BACKGROUND_PRESETS.map((preset) => (
+        {isThemeOpen && (
+          <div className="absolute bottom-full left-0 mb-1 w-44 max-h-72 overflow-y-auto bg-[#0a0a0a] border border-[#222] rounded-lg shadow-xl z-50 flex flex-col py-1">
+            {EDITOR_THEMES.map((editorTheme) => (
               <button
-                key={preset.id}
+                key={editorTheme.id}
                 type="button"
                 onClick={() => {
-                  setBackground(preset.value);
-                  setIsBgOpen(false);
+                  setThemeId(editorTheme.id);
+                  setIsThemeOpen(false);
                 }}
                 className={`flex items-center gap-2 px-3 py-2 text-xs text-left transition-colors hover:bg-[#1a1a1a] ${
-                  background === preset.value ? "text-white bg-[#111]" : "text-[#8b8b8b]"
+                  themeId === editorTheme.id ? "text-white bg-[#111]" : "text-[#8b8b8b]"
                 }`}
               >
                 <div
                   className="w-4 h-4 rounded-full border border-[#333] shrink-0"
-                  style={{
-                    background: preset.value === "transparent"
-                      ? "repeating-conic-gradient(#333 0% 25%, #1a1a1a 0% 50%) 50% / 8px 8px"
-                      : preset.value,
-                  }}
+                  style={{ background: editorTheme.canvasBackground }}
                 />
-                <span className="truncate">{t.backgrounds[preset.id]}</span>
+                <span className="truncate">{t.themes[editorTheme.id]}</span>
               </button>
             ))}
           </div>

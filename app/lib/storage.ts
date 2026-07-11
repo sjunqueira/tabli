@@ -1,10 +1,10 @@
 import type { ContentState, ExportScale, Preferences, Snapshot, TableData } from "./types";
 import {
+  EDITOR_THEMES,
   EXPORT_SCALES,
   FONT_SIZES,
   LANGUAGE_OPTIONS,
   PADDING_PRESETS,
-  THEME_OPTIONS,
 } from "./constants";
 
 export const STORAGE_KEYS = {
@@ -50,9 +50,10 @@ export function loadPreferences(): Partial<Preferences> | null {
 
   const result: Partial<Preferences> = {};
 
-  if (typeof raw.theme === "string" && THEME_OPTIONS.some((t) => t.value === raw.theme)) {
-    result.theme = raw.theme;
+  if (typeof raw.theme === "string" && EDITOR_THEMES.some((t) => t.id === raw.theme)) {
+    result.theme = raw.theme as Preferences["theme"];
   }
+  if (typeof raw.showBackground === "boolean") result.showBackground = raw.showBackground;
   if (typeof raw.padding === "string" && PADDING_PRESETS.some((p) => p.id === raw.padding)) {
     result.padding = raw.padding as Preferences["padding"];
   }

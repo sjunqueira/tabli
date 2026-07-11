@@ -1,35 +1,156 @@
-import { BackgroundId, BackgroundPreset, ExportScale, LanguageOption, PaddingPreset, ThemeOption } from "./types";
+import { EditorTheme, ExportScale, LanguageOption, PaddingPreset } from "./types";
 
-export const BACKGROUND_PRESETS: BackgroundPreset[] = [
-  { id: "transparent", value: "transparent" },
-  { id: "indigo", value: "linear-gradient(140deg, #1e1b4b 0%, #0f172a 100%)" },
-  { id: "blue", value: "linear-gradient(140deg, #0f172a 0%, #1e3a8a 100%)" },
-  { id: "emerald", value: "linear-gradient(140deg, #111827 0%, #064e3b 100%)" },
-  { id: "green", value: "linear-gradient(140deg, #064e3b 0%, #10b981 100%)" },
-  { id: "pink", value: "linear-gradient(140deg, #4c0519 0%, #1e1b4b 100%)" },
-  { id: "red", value: "linear-gradient(140deg, #7f1d1d 0%, #991b1b 100%)" },
-  { id: "yellow", value: "linear-gradient(140deg, #78350f 0%, #ca8a04 100%)" },
-  { id: "black", value: "#050505" },
-  { id: "gray", value: "#0a0a0a" },
-  { id: "white", value: "#fff" },
+// paleta curada à mão por tema — cardBackground usa alpha <1 de propósito
+// (leve efeito de vidro fosco, combinado com o backdrop-blur do card) e
+// shikiTheme só precisa combinar visualmente com a paleta, não bater 1:1
+// com o nome do tema (por isso vários temas hardcoded reaproveitam um tema
+// do Shiki já pronto que "veste bem" a cor escolhida)
+export const EDITOR_THEMES: EditorTheme[] = [
+  {
+    id: "github-dark",
+    shikiTheme: "github-dark",
+    canvasBackground: "linear-gradient(140deg, #0d1117 0%, #1c2530 100%)",
+    cardBackground: "rgba(13,17,23,0.92)",
+    tableHeaderBg: "rgba(88,166,255,0.14)",
+    tableHeaderText: "#79c0ff",
+  },
+  {
+    id: "dracula",
+    shikiTheme: "dracula",
+    canvasBackground: "linear-gradient(140deg, #2b2140 0%, #1e1f29 100%)",
+    cardBackground: "rgba(40,42,54,0.92)",
+    tableHeaderBg: "rgba(189,147,249,0.16)",
+    tableHeaderText: "#bd93f9",
+  },
+  {
+    id: "one-dark-pro",
+    shikiTheme: "one-dark-pro",
+    canvasBackground: "linear-gradient(140deg, #282c34 0%, #1b1e24 100%)",
+    cardBackground: "rgba(40,44,52,0.92)",
+    tableHeaderBg: "rgba(97,175,239,0.14)",
+    tableHeaderText: "#61afef",
+  },
+  {
+    id: "nord",
+    shikiTheme: "nord",
+    canvasBackground: "linear-gradient(140deg, #2e3440 0%, #242933 100%)",
+    cardBackground: "rgba(46,52,64,0.92)",
+    tableHeaderBg: "rgba(136,192,208,0.16)",
+    tableHeaderText: "#88c0d0",
+  },
+  {
+    id: "vitesse-dark",
+    shikiTheme: "vitesse-dark",
+    canvasBackground: "linear-gradient(140deg, #181818 0%, #101010 100%)",
+    cardBackground: "rgba(18,18,18,0.92)",
+    tableHeaderBg: "rgba(77,147,117,0.18)",
+    tableHeaderText: "#7fd9b6",
+  },
+  {
+    id: "min-dark",
+    shikiTheme: "min-dark",
+    canvasBackground: "linear-gradient(140deg, #1f1f1f 0%, #141414 100%)",
+    cardBackground: "rgba(31,31,31,0.92)",
+    tableHeaderBg: "rgba(255,255,255,0.05)",
+    tableHeaderText: "#a1a1aa",
+  },
+  {
+    id: "ayu-dark",
+    shikiTheme: "ayu-dark",
+    canvasBackground: "linear-gradient(140deg, #0b0e14 0%, #131721 100%)",
+    cardBackground: "rgba(11,14,20,0.92)",
+    tableHeaderBg: "rgba(255,180,84,0.16)",
+    tableHeaderText: "#ffb454",
+  },
+  {
+    id: "noir",
+    shikiTheme: "vitesse-black",
+    canvasBackground: "linear-gradient(140deg, #1c1c1c 0%, #0a0a0a 100%)",
+    cardBackground: "rgba(20,20,20,0.92)",
+    tableHeaderBg: "rgba(255,255,255,0.06)",
+    tableHeaderText: "#d4d4d8",
+  },
+  {
+    id: "ice",
+    shikiTheme: "night-owl",
+    canvasBackground: "linear-gradient(140deg, #142b3d 0%, #0a1622 100%)",
+    cardBackground: "rgba(15,33,48,0.9)",
+    tableHeaderBg: "rgba(56,189,248,0.16)",
+    tableHeaderText: "#7dd3fc",
+  },
+  {
+    id: "sand",
+    shikiTheme: "gruvbox-dark-soft",
+    canvasBackground: "linear-gradient(140deg, #d8a672 0%, #b9804a 100%)",
+    cardBackground: "rgba(38,30,22,0.9)",
+    tableHeaderBg: "rgba(217,166,114,0.18)",
+    tableHeaderText: "#e8c9a0",
+  },
+  {
+    id: "forest",
+    shikiTheme: "everforest-dark",
+    canvasBackground: "linear-gradient(140deg, #1a2e22 0%, #0d1a13 100%)",
+    cardBackground: "rgba(18,32,26,0.92)",
+    tableHeaderBg: "rgba(74,222,128,0.16)",
+    tableHeaderText: "#86efac",
+  },
+  {
+    id: "mono",
+    shikiTheme: "vesper",
+    canvasBackground: "linear-gradient(140deg, #2a2a2a 0%, #131313 100%)",
+    cardBackground: "rgba(26,26,26,0.92)",
+    tableHeaderBg: "rgba(255,255,255,0.05)",
+    tableHeaderText: "#a1a1aa",
+  },
+  {
+    id: "breeze",
+    shikiTheme: "poimandres",
+    canvasBackground: "linear-gradient(140deg, #2a2140 0%, #171225 100%)",
+    cardBackground: "rgba(30,24,48,0.92)",
+    tableHeaderBg: "rgba(167,139,250,0.16)",
+    tableHeaderText: "#c4b5fd",
+  },
+  {
+    id: "candy",
+    shikiTheme: "synthwave-84",
+    canvasBackground: "linear-gradient(140deg, #3d1a35 0%, #1f0f24 100%)",
+    cardBackground: "rgba(42,21,48,0.9)",
+    tableHeaderBg: "rgba(244,114,182,0.18)",
+    tableHeaderText: "#f9a8d4",
+  },
+  {
+    id: "crimson",
+    shikiTheme: "red",
+    canvasBackground: "linear-gradient(140deg, #3d1015 0%, #1a0708 100%)",
+    cardBackground: "rgba(36,10,13,0.92)",
+    tableHeaderBg: "rgba(248,113,113,0.16)",
+    tableHeaderText: "#fca5a5",
+  },
+  {
+    id: "falcon",
+    shikiTheme: "tokyo-night",
+    canvasBackground: "linear-gradient(140deg, #2b3648 0%, #151b26 100%)",
+    cardBackground: "rgba(28,37,49,0.92)",
+    tableHeaderBg: "rgba(148,163,184,0.16)",
+    tableHeaderText: "#cbd5e1",
+  },
+  {
+    id: "meadow",
+    shikiTheme: "monokai",
+    canvasBackground: "linear-gradient(140deg, #24361f 0%, #101a0d 100%)",
+    cardBackground: "rgba(24,38,21,0.92)",
+    tableHeaderBg: "rgba(163,230,53,0.16)",
+    tableHeaderText: "#bef264",
+  },
+  {
+    id: "midnight",
+    shikiTheme: "aurora-x",
+    canvasBackground: "linear-gradient(140deg, #141a33 0%, #0a0d1a 100%)",
+    cardBackground: "rgba(16,20,42,0.92)",
+    tableHeaderBg: "rgba(129,140,248,0.16)",
+    tableHeaderText: "#a5b4fc",
+  },
 ];
-
-// cor do cabeçalho da tabela (fundo + texto) por preset de fundo — presets
-// "neutros" (transparente/preto/cinza/branco) caem num cinza sutil ("ghost"),
-// os coloridos puxam um tom próximo ao do gradiente escolhido
-export const TABLE_HEADER_ACCENTS: Record<BackgroundId, { bg: string; text: string }> = {
-  transparent: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
-  black: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
-  gray: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
-  white: { bg: "rgba(255,255,255,0.04)", text: "#a1a1aa" },
-  indigo: { bg: "rgba(99,102,241,0.14)", text: "#a5b4fc" },
-  blue: { bg: "rgba(59,130,246,0.14)", text: "#93c5fd" },
-  emerald: { bg: "rgba(16,185,129,0.14)", text: "#6ee7b7" },
-  green: { bg: "rgba(74,222,128,0.14)", text: "#86efac" },
-  pink: { bg: "rgba(236,72,153,0.14)", text: "#f9a8d4" },
-  red: { bg: "rgba(239,68,68,0.14)", text: "#fca5a5" },
-  yellow: { bg: "rgba(245,158,11,0.14)", text: "#fcd34d" },
-};
 
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { label: "TypeScript", value: "typescript" },
@@ -82,17 +203,6 @@ export const CARD_SOFT_MAX_WIDTH = 900;
 // limite real — a partir daqui o conteúdo não cabe mais e a imagem exportada
 // é cortada
 export const CARD_HARD_MAX_WIDTH = 1200;
-
-export const THEME_OPTIONS: ThemeOption[] = [
-  { label: "GitHub Dark", value: "github-dark" },
-  { label: "Dracula", value: "dracula" },
-  { label: "One Dark Pro", value: "one-dark-pro" },
-  { label: "Nord", value: "nord" },
-  { label: "Vitesse Dark", value: "vitesse-dark" },
-  { label: "Min Dark", value: "min-dark" },
-  { label: "Ayu Dark", value: "ayu-dark" },
-  
-];
 
 export const DEFAULT_CODE = `function pullMasterSword(hearts: number) {
   if (hearts < 13) {

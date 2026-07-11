@@ -10,6 +10,9 @@ import type { Mode, TableData } from "../lib/types";
 interface CaptureFrameProps {
   mode: Mode;
   background: string;
+  cardBackground: string;
+  tableHeaderBg: string;
+  tableHeaderText: string;
   padding: number;
   code: string;
   onCodeChange: (v: string) => void;
@@ -39,7 +42,7 @@ interface CaptureFrameProps {
 export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
   function CaptureFrame(props, ref) {
     const {
-      mode, background, padding, code, onCodeChange, language, theme,
+      mode, background, cardBackground, tableHeaderBg, tableHeaderText, padding, code, onCodeChange, language, theme,
       fileName, onFileNameChange, showWindowControls, table,
       codeWidth, fontSize, watermark,
       codeCardRef, codeTextareaRef, tableScrollRef, tableCardRef, tableWidth,
@@ -59,6 +62,7 @@ export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
             onCodeChange={onCodeChange}
             language={language}
             theme={theme}
+            cardBackground={cardBackground}
             fileName={fileName}
             onFileNameChange={onFileNameChange}
             showWindowControls={showWindowControls}
@@ -77,7 +81,9 @@ export const CaptureFrame = forwardRef<HTMLDivElement, CaptureFrameProps>(
             table={table}
             setTable={setTable}
             scrollRef={tableScrollRef}
-            background={background}
+            cardBackground={cardBackground}
+            headerBg={tableHeaderBg}
+            headerText={tableHeaderText}
             cardRef={tableCardRef}
             cardWidth={tableWidth}
             onResizeStart={onTableResizeStart}

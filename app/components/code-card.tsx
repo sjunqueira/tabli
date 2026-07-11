@@ -11,6 +11,7 @@ interface CodeCardProps {
   onCodeChange: (v: string) => void;
   language: string;
   theme: string;
+  cardBackground: string;
   fileName: string;
   onFileNameChange: (v: string) => void;
   showWindowControls: boolean;
@@ -30,6 +31,7 @@ export function CodeCard({
   onCodeChange,
   language,
   theme,
+  cardBackground,
   fileName,
   onFileNameChange,
   showWindowControls,
@@ -84,8 +86,8 @@ export function CodeCard({
   return (
     <div
       ref={cardRef}
-      style={{ width: width === "auto" ? "fit-content" : `${width}px` }}
-      className="snippet-card relative min-w-[420px] max-w-[1200px] bg-[#0a0a0a] rounded-xl border border-[#222] shadow-2xl flex flex-col"
+      style={{ width: width === "auto" ? "fit-content" : `${width}px`, backgroundColor: cardBackground }}
+      className="snippet-card relative min-w-[420px] max-w-[1200px] rounded-xl border border-[#222] shadow-2xl flex flex-col"
     >
       {/* overflow-hidden fica aqui, não no card em si — senão clipa as
           bolinhas de resize, que ficam parcialmente fora da borda do card */}

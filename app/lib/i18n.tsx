@@ -5,8 +5,6 @@ import type { Locale } from "./types";
 
 export interface TranslationStrings {
   header: {
-    copy: string;
-    save: string;
     settings: string;
     preferences: string;
     exportAs: string;
@@ -21,10 +19,29 @@ export interface TranslationStrings {
   };
   infoPopup: {
     title: string;
+    aboutTitle: string;
     intro: string;
     inspiration: string;
     scope: string;
-    close: string;
+    contributeTitle: string;
+    contribute: string;
+    starCta: string;
+    coffeeNote: string;
+    shortcutsTitle: string;
+  };
+  shortcuts: {
+    focusEditor: string;
+    unfocusEditor: string;
+    changeColors: string;
+    toggleBackground: string;
+    toggleLineNumbers: string;
+    changePadding: string;
+    selectLanguage: string;
+    formatCode: string;
+    toggleWindowControls: string;
+    copyImage: string;
+    saveImage: string;
+    openShortcuts: string;
   };
   common: {
     code: string;
@@ -41,6 +58,7 @@ export interface TranslationStrings {
   bottomBar: {
     windowControls: string;
     lineNumbers: string;
+    background: string;
   };
   codeToolbar: {
     resetWidth: string;
@@ -87,8 +105,25 @@ export interface TranslationStrings {
     close: string;
     snippetAlt: string;
   };
-  backgrounds: Record<
-    "transparent" | "indigo" | "blue" | "emerald" | "green" | "pink" | "red" | "yellow" | "black" | "gray" | "white",
+  themes: Record<
+    | "github-dark"
+    | "dracula"
+    | "one-dark-pro"
+    | "nord"
+    | "vitesse-dark"
+    | "min-dark"
+    | "ayu-dark"
+    | "noir"
+    | "ice"
+    | "sand"
+    | "forest"
+    | "mono"
+    | "breeze"
+    | "candy"
+    | "crimson"
+    | "falcon"
+    | "meadow"
+    | "midnight",
     string
   >;
   paddings: Record<"tight" | "compact" | "default" | "spacious", string>;
@@ -97,8 +132,6 @@ export interface TranslationStrings {
 
 const ptBR: TranslationStrings = {
   header: {
-    copy: "Copiar Imagem",
-    save: "Salvar Imagem",
     settings: "Configurações",
     preferences: "Preferências",
     exportAs: "Exportar como",
@@ -113,16 +146,37 @@ const ptBR: TranslationStrings = {
   },
   infoPopup: {
     title: "Sobre o Tabli",
+    aboutTitle: "Sobre",
     intro:
       "Tabli é uma ferramenta para transformar pequenos trechos de código e tabelas em imagens bonitas, prontas para compartilhar. A ideia é oferecer uma forma rápida e intuitiva de criar capturas com aparência profissional, sem precisar editar imagens manualmente.",
 
-    inspiration:
-      "A inspiração vem do ray.so, mas com um foco específico em blocos pequenos e organizados, pensados para fins didáticos. Além de snippets de código, o Tabli também oferece uma experiência dedicada para tabelas, facilitando a criação de exemplos para documentação, apresentações e conteúdo técnico.",
-
+   inspiration:
+      "O Tabli não nasceu completamente do zero. A ideia inicial era criar um fork do ray.so, mas, após avaliar o projeto, decidi que seria melhor desenvolver uma nova codebase do zero, com o auxílio de IA, mantendo apenas a inspiração na experiência original. É justamente por isso que o Tabli também é open-source: uma forma de manter vivo o espírito do projeto que o inspirou, enquanto evolui como um produto próprio, tendo o modo de tabelas como seu principal diferencial.",
     scope:
-      "Não é feito para código ou tabelas grandes e reais de produção: o objetivo aqui são imagens educativas, exemplos e trechos ilustrativos — não documentação extensa nem dados sensíveis. Todo o processamento acontece localmente no navegador, sem enviar seu conteúdo para servidores, mantendo seus dados privados.",
+      "Não é feito para código ou tabelas grandes e reais de produção: o objetivo aqui são imagens educativas, exemplos e trechos ilustrativos. Todo o processamento acontece localmente no navegador, sem enviar seu conteúdo para servidores, mantendo seus dados privados.",
 
-    close: "Entendi",
+    contributeTitle: "Contribua",
+    contribute:
+      "O projeto continua open-source. Você pode contribuir direto no repositório ou criar seu próprio fork e versão a partir dele em",
+    starCta: "Gostou do Tabli? A forma mais simples de apoiar é deixando uma estrela no",
+
+    coffeeNote: "Café via Pix/PayPal: sergiojunqueira.s@gmail.com",
+
+    shortcutsTitle: "Atalhos",
+  },
+  shortcuts: {
+    focusEditor: "Focar editor",
+    unfocusEditor: "Desfocar editor",
+    changeColors: "Mudar tema/cores",
+    toggleBackground: "Alternar fundo",
+    toggleLineNumbers: "Alternar linhas",
+    changePadding: "Mudar espaçamento",
+    selectLanguage: "Trocar linguagem",
+    formatCode: "Formatar código",
+    toggleWindowControls: "Alternar janela",
+    copyImage: "Copiar imagem",
+    saveImage: "Salvar imagem",
+    openShortcuts: "Abrir atalhos",
   },
   common: {
     code: "Código",
@@ -139,14 +193,15 @@ const ptBR: TranslationStrings = {
   bottomBar: {
     windowControls: "Janela",
     lineNumbers: "Linhas",
+    background: "Fundo",
   },
   codeToolbar: {
     resetWidth: "← Ajuste automático",
     format: "Formatar código",
     unsupportedLanguageWarning:
-      "Esta linguagem não tem suporte completo do Prettier — foi aplicada apenas a normalização de indentação, então a formatação pode não ficar tão precisa.",
-    formatError: (details) => `Não foi possível formatar — ${details}.`,
-    overflowWidthSoft: "Seu código está ficando grande — imagens muito grandes podem não ficar tão boas.",
+      "Esta linguagem não tem suporte completo do Prettier. Foi aplicada apenas a normalização de indentação, então a formatação pode não ficar tão precisa.",
+    formatError: (details) => `Não foi possível formatar: ${details}.`,
+    overflowWidthSoft: "Seu código está ficando grande. Imagens muito grandes podem não ficar tão boas.",
     overflowWidth:
       "Seu código passou do tamanho máximo. A imagem exportada será cortada. Recomendamos quebrar em linhas menores.",
     overflowHeight:
@@ -154,7 +209,7 @@ const ptBR: TranslationStrings = {
   },
   tableToolbar: {
     resetColumnWidths: "← Ajuste automático",
-    overflowWidthSoft: "Sua tabela está ficando grande — imagens muito grandes podem não ficar tão boas.",
+    overflowWidthSoft: "Sua tabela está ficando grande. Imagens muito grandes podem não ficar tão boas.",
     overflowWidth:
       "Algumas colunas ficaram estreitas demais e os dados não estão totalmente visíveis. Remova colunas ou linhas para melhorar a legibilidade.",
     overflowHeight:
@@ -190,18 +245,25 @@ const ptBR: TranslationStrings = {
     close: "Fechar",
     snippetAlt: "Snippet gerado",
   },
-  backgrounds: {
-    transparent: "Transparente",
-    indigo: "Índigo",
-    blue: "Azul",
-    emerald: "Esmeralda",
-    green: "Verde",
-    pink: "Rosa",
-    red: "Vermelho",
-    yellow: "Amarelo",
-    black: "Preto",
-    gray: "Cinza",
-    white: "Branco",
+  themes: {
+    "github-dark": "GitHub Dark",
+    dracula: "Dracula",
+    "one-dark-pro": "One Dark Pro",
+    nord: "Nord",
+    "vitesse-dark": "Vitesse Dark",
+    "min-dark": "Min Dark",
+    "ayu-dark": "Ayu Dark",
+    noir: "Noir",
+    ice: "Ice",
+    sand: "Sand",
+    forest: "Forest",
+    mono: "Mono",
+    breeze: "Breeze",
+    candy: "Candy",
+    crimson: "Crimson",
+    falcon: "Falcon",
+    meadow: "Meadow",
+    midnight: "Midnight",
   },
   paddings: {
     tight: "Justo",
@@ -214,8 +276,6 @@ const ptBR: TranslationStrings = {
 
 const enUS: TranslationStrings = {
   header: {
-    copy: "Copy Image",
-    save: "Save Image",
     settings: "Settings",
     preferences: "Preferences",
     exportAs: "Export as",
@@ -230,13 +290,33 @@ const enUS: TranslationStrings = {
   },
   infoPopup: {
     title: "About Tabli",
+    aboutTitle: "About",
     intro:
       "Tabli is a tool for turning small code snippets and tables into beautiful, shareable images. The goal is to provide a fast and intuitive way to create polished visuals without the need for manual image editing.",
-    inspiration:
-      "The inspiration comes from ray.so, but with a stronger focus on small, well-organized snippets designed for educational content. In addition to code, Tabli provides a dedicated experience for tables, making it easy to create visuals for documentation, presentations, and technical articles.",
+   inspiration:
+     "Tabli didn't start completely from scratch. The original idea was to build it as a fork of ray.so, but after evaluating the project I decided it would be better to create a brand-new codebase instead, developed with the help of AI while keeping the same core inspiration. That's also why Tabli is open source: to honor the spirit of the project that inspired it while allowing it to evolve into its own product, with table support becoming its main differentiator.",
     scope:
-      "Tabli is not intended for large production codebases or massive datasets. It is designed for educational examples, visual demonstrations, and illustrative snippets—not full documentation or sensitive information. Everything runs locally in your browser, so your content is never uploaded to external servers.",
-    close: "Got it",
+      "Tabli is not intended for large production codebases or massive datasets. It is designed for educational examples, visual demonstrations, and illustrative snippets. Everything runs locally in your browser, so your content is never uploaded to external servers.",
+    contributeTitle: "Contribute",
+    contribute:
+      "The project remains open-source. You can contribute directly to the repository or create your own fork and version from it on",
+    starCta: "Enjoying Tabli? The simplest way to support it is leaving a star on the",
+    coffeeNote: "Coffee via Pix/PayPal: sergiojunqueira.s@gmail.com",
+    shortcutsTitle: "Shortcuts",
+  },
+  shortcuts: {
+    focusEditor: "Focus editor",
+    unfocusEditor: "Unfocus editor",
+    changeColors: "Change theme/colors",
+    toggleBackground: "Toggle background",
+    toggleLineNumbers: "Toggle line numbers",
+    changePadding: "Change padding",
+    selectLanguage: "Select language",
+    formatCode: "Format code",
+    toggleWindowControls: "Toggle window",
+    copyImage: "Copy image",
+    saveImage: "Save image",
+    openShortcuts: "Open shortcuts",
   },
   common: {
     code: "Code",
@@ -253,14 +333,15 @@ const enUS: TranslationStrings = {
   bottomBar: {
     windowControls: "Window",
     lineNumbers: "Lines",
+    background: "Background",
   },
   codeToolbar: {
     resetWidth: "← Auto-adjustment",
     format: "Format Code",
     unsupportedLanguageWarning:
-      "This language isn't fully supported by Prettier — only indentation normalization was applied, so formatting may be less precise.",
-    formatError: (details) => `Couldn't format — ${details}.`,
-    overflowWidthSoft: "Your code is getting large — very large images may not look as good.",
+      "This language isn't fully supported by Prettier. Only indentation normalization was applied, so formatting may be less precise.",
+    formatError: (details) => `Couldn't format: ${details}.`,
+    overflowWidthSoft: "Your code is getting large. Very large images may not look as good.",
     overflowWidth:
       "Your code exceeds the maximum width. The exported image will be cropped. We recommend breaking it into shorter lines.",
     overflowHeight:
@@ -268,7 +349,7 @@ const enUS: TranslationStrings = {
   },
   tableToolbar: {
     resetColumnWidths: "← Auto-adjustment",
-    overflowWidthSoft: "Your table is getting large — very large images may not look as good.",
+    overflowWidthSoft: "Your table is getting large. Very large images may not look as good.",
     overflowWidth:
       "Some columns became too narrow and the data isn't fully visible. Remove columns or rows to improve readability.",
     overflowHeight:
@@ -304,18 +385,25 @@ const enUS: TranslationStrings = {
     close: "Close",
     snippetAlt: "Generated snippet",
   },
-  backgrounds: {
-    transparent: "Transparent",
-    indigo: "Indigo",
-    blue: "Blue",
-    emerald: "Emerald",
-    green: "Green",
-    pink: "Pink",
-    red: "Red",
-    yellow: "Yellow",
-    black: "Black",
-    gray: "Gray",
-    white: "White",
+  themes: {
+    "github-dark": "GitHub Dark",
+    dracula: "Dracula",
+    "one-dark-pro": "One Dark Pro",
+    nord: "Nord",
+    "vitesse-dark": "Vitesse Dark",
+    "min-dark": "Min Dark",
+    "ayu-dark": "Ayu Dark",
+    noir: "Noir",
+    ice: "Ice",
+    sand: "Sand",
+    forest: "Forest",
+    mono: "Mono",
+    breeze: "Breeze",
+    candy: "Candy",
+    crimson: "Crimson",
+    falcon: "Falcon",
+    meadow: "Meadow",
+    midnight: "Midnight",
   },
   paddings: {
     tight: "Tight",

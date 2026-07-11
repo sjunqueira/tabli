@@ -22,7 +22,7 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: #555; }
 
 .snippet-card {
-  background-color: #121212;
+  /* background-color vem inline no componente (acompanha o tema escolhido) */
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   box-shadow:
@@ -128,21 +128,6 @@ body {
   width: 1px;
   height: 20px;
   background: var(--border-color);
-}
-
-.bottom-bar-select {
-  background: transparent;
-  border: none;
-  color: var(--text-main);
-  font-size: 0.75rem;
-  font-family: inherit;
-  padding: 4px 6px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.bottom-bar-select:hover {
-  background: rgba(255, 255, 255, 0.06);
 }
 
 .bottom-bar-step {

@@ -2,26 +2,35 @@
 
 import { useRef, useState, type RefObject } from "react";
 import { TableData } from "../lib/types";
-import { BACKGROUND_PRESETS, MAX_CARD_HEIGHT, MIN_COLUMN_WIDTH, TABLE_HEADER_ACCENTS } from "../lib/constants";
+import { MAX_CARD_HEIGHT, MIN_COLUMN_WIDTH } from "../lib/constants";
 import { useTranslations } from "../lib/i18n";
 
 interface TableSnippetProps {
   table: TableData;
   setTable: (t: TableData) => void;
   scrollRef: RefObject<HTMLDivElement | null>;
-  background: string;
+  cardBackground: string;
+  headerBg: string;
+  headerText: string;
   cardRef: RefObject<HTMLDivElement | null>;
   cardWidth: number | "auto";
   onResizeStart: (direction: 1 | -1) => (e: React.MouseEvent) => void;
 }
 
-export function TableSnippet({ table, setTable, scrollRef, background, cardRef, cardWidth, onResizeStart }: TableSnippetProps) {
+export function TableSnippet({
+  table,
+  setTable,
+  scrollRef,
+  cardBackground,
+  headerBg,
+  headerText,
+  cardRef,
+  cardWidth,
+  onResizeStart,
+}: TableSnippetProps) {
   const { t } = useTranslations();
   const [resizingCol, setResizingCol] = useState<number | null>(null);
   const tableRef = useRef<HTMLTableElement>(null);
-
-  const backgroundId = BACKGROUND_PRESETS.find((p) => p.value === background)?.id ?? "transparent";
-  const headerAccent = TABLE_HEADER_ACCENTS[backgroundId];
 
   const updateHeader = (i: number, value: string) => {
     const headers = [...table.headers];
@@ -111,8 +120,8 @@ export function TableSnippet({ table, setTable, scrollRef, background, cardRef, 
   return (
     <div
       ref={cardRef}
-      style={{ width: cardWidth === "auto" ? undefined : `${cardWidth}px` }}
-      className="group/card relative min-w-[420px] max-w-[1200px] bg-[#0a0a0a] rounded-xl border border-[#222] shadow-2xl flex flex-col"
+      style={{ width: cardWidth === "auto" ? undefined : `${cardWidth}px`, backgroundColor: cardBackground }}
+      className="group/card relative min-w-[420px] max-w-[1200px] rounded-xl border border-[#222] shadow-2xl flex flex-col"
     >
       <div ref={scrollRef} className="overflow-auto rounded-xl" style={{ maxHeight: `${MAX_CARD_HEIGHT}px` }}>
         <table
@@ -129,8 +138,8 @@ export function TableSnippet({ table, setTable, scrollRef, background, cardRef, 
                     key={i}
                     className="group/col relative"
                     style={{
-                      backgroundColor: headerAccent.bg,
-                      color: headerAccent.text,
+                      backgroundColor: headerBg,
+                      color: headerText,
                       ...(width ? { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` } : undefined),
                     }}
                   >
