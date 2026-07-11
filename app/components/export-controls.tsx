@@ -3,6 +3,7 @@
 import { useEffect, type RefObject } from "react";
 import { useImageExport } from "../hooks/use-image-export";
 import { useTranslations } from "../lib/i18n";
+import { isEditableTarget } from "../lib/dom";
 import type { ExportFormat, ExportScale } from "../lib/types";
 
 interface ExportControlsProps {
@@ -12,11 +13,6 @@ interface ExportControlsProps {
   scale: ExportScale;
   compact?: boolean;
   onExportSuccess?: () => void;
-}
-
-function isEditableTarget(el: Element | null): boolean {
-  if (!(el instanceof HTMLElement)) return false;
-  return el.tagName === "TEXTAREA" || el.tagName === "INPUT" || el.isContentEditable;
 }
 
 export function ExportControls({ targetRef, fileName, format, scale, compact, onExportSuccess }: ExportControlsProps) {
